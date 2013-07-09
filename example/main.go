@@ -65,15 +65,6 @@ func mapRoutes(g *gomniauth.Gomniauth) {
 
 	})
 
-	goweb.Map(func(c context.Context) error {
-
-		fmt.Printf("catch all: %s\n", c.HttpRequest())
-
-		// just return a 404 message
-		return goweb.API.Respond(c, 404, nil, []string{"File not found"})
-
-	})
-
 }
 
 func main() {
