@@ -42,7 +42,7 @@ func TestSessionGetAuthURL(t *testing.T) {
 	url, err := s.GetAuthURL(provider, state)
 
 	if assert.NoError(t, err) {
-		assert.Equal(t, "?access_type=online&approval_prompt=force&client_id=CLIENTID&redirect_uri=http%3A%2F%2Fwww.test.com%2F&response_type=code&scope=&state=state", url)
+		assert.Equal(t, "?access_type=online&approval_prompt=force&client_id=CLIENTID&redirect_uri=http%3A%2F%2Fwww.test.com%2F&response_type=code&scope=&state=eyJpZCI6ImFiYzEyMyIsInRhcmdldFVybCI6Imh0dHA6Ly93d3cuZ29vZ2xlLmNvbS8ifQ%3D%3D", url)
 	}
 
 	mock.AssertExpectationsForObjects(t, provider.Mock)

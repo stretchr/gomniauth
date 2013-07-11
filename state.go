@@ -14,7 +14,7 @@ func StateFromRequest(authType common.AuthType, r *http.Request) (objects.Map, e
 	case common.AuthTypeOAuth2:
 
 		state := r.FormValue("state")
-		return objects.NewMapFromBase64(state), nil
+		return objects.NewMapFromBase64String(state)
 
 	}
 
@@ -33,6 +33,7 @@ func fieldFromState(authType common.AuthType, state objects.Map, field string) (
 func IDFromState(authType common.AuthType, state objects.Map) (string, error) {
 	return fieldFromState(authType, state, "id")
 }
-func TargetURLFromState(authType common.AuthType, state objects.Map) (string, error) {
-	return fieldFromState(authType, state, "targetUrl")
+func TargetURLFromState(authType common.AuthType, state objects.Map) string {
+	s, _ := fieldFromState(authType, state, "targetUrl")
+	return s
 }

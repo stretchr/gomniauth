@@ -4,7 +4,6 @@ import (
 	"github.com/stretchr/gomniauth/common"
 	"github.com/stretchr/stew/objects"
 	"github.com/stretchr/testify/mock"
-	"net/http"
 )
 
 type TestProvider struct {
