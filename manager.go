@@ -1,16 +1,24 @@
 package gomniauth
 
 type Manager struct {
-	tokenStore TokenStore
-	providers  map[string]*Provider
+	authStore AuthStore
+	providers map[string]Provider
 }
 
-func NewManager(tokenStore TokenStore) *Manager {
-	m := &Manager{tokenStore: tokenStore}
+func NewManager(authStore AuthStore, providers ...Provider) *Manager {
+	m := &Manager{authStore: authStore}
 
-	// TODO: install default providers
+	m.providers = make(map[string]Provider)
+
+	for _, provider := range providers {
+		m.providers[provider.Name()] = provider
+	}
 
 	return m
+}
+
+func (m *Manager) Providers() map[string]Provider {
+	return m.providers
 }
 
 func (m *Manager) WithID(id string) *Session {

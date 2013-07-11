@@ -101,9 +101,9 @@ func (t *Transport) Refresh() error {
 }
 
 func (t *Transport) updateToken(tok *Token, v url.Values) error {
-	v.Set("client_id", t.Config.ClientId)
-	v.Set("client_secret", t.Config.ClientSecret)
-	r, err := (&http.Client{Transport: t.transport()}).PostForm(t.Config.TokenURL, v)
+	v.Set("client_id", t.Config.ClientId())
+	v.Set("client_secret", t.Config.ClientSecret())
+	r, err := (&http.Client{Transport: t.transport()}).PostForm(t.Config.TokenURL(), v)
 	if err != nil {
 		return err
 	}
@@ -167,8 +167,8 @@ func (t *Transport) Exchange(code string) (*Token, error) {
 	}
 	err := t.updateToken(tok, url.Values{
 		"grant_type":   {"authorization_code"},
-		"redirect_uri": {t.Config.RedirectURL},
-		"scope":        {t.Config.Scope},
+		"redirect_uri": {t.Config.RedirectURL()},
+		"scope":        {t.Config.Scope()},
 		"code":         {code},
 	})
 	if err != nil {

@@ -1,6 +1,7 @@
 package oauth2
 
 import (
+	"github.com/stretchr/stew/objects"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -82,11 +83,11 @@ func TestOAuth(t *testing.T) {
 	defer server.Close()
 
 	config := &Config{
-		ClientId:     "cl13nt1d",
-		ClientSecret: "s3cr3t",
-		Scope:        "https://example.net/scope",
-		AuthURL:      server.URL + "/auth",
-		TokenURL:     server.URL + "/token",
+		Map: objects.NewMap("clientId", "cl13nt1d",
+			"clientSecret", "s3cr3t",
+			"scope", "https://example.net/scope",
+			"authURL", server.URL+"/auth",
+			"tokenURL", server.URL+"/token"),
 	}
 
 	// TODO(adg): test AuthCodeURL
