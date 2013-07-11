@@ -1,6 +1,7 @@
 package gomniauth
 
 import (
+	"github.com/stretchr/gomniauth/common"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -8,8 +9,8 @@ import (
 func TestNewManager(t *testing.T) {
 
 	authStore := new(TestAuthStore)
-	prov1 := new(TestProvider)
-	prov2 := new(TestProvider2)
+	prov1 := new(common.TestProvider)
+	prov2 := new(common.TestProvider2)
 
 	prov1.On("Name").Return("Prov1")
 	prov2.On("Name").Return("Prov2")
@@ -29,8 +30,8 @@ func TestNewManager(t *testing.T) {
 func TestManager_Providers(t *testing.T) {
 
 	authStore := new(TestAuthStore)
-	prov1 := new(TestProvider)
-	prov2 := new(TestProvider2)
+	prov1 := new(common.TestProvider)
+	prov2 := new(common.TestProvider2)
 
 	prov1.On("Name").Return("Prov1")
 	prov2.On("Name").Return("Prov2")

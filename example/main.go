@@ -28,14 +28,27 @@ const (
 	CookieNameSession string = "session"
 )
 
+// RedirectToLoginPage responds WithRedirect to the login page,
+// passing the current page as the 'target' parameter.
+var RedirectToLoginPage = func(c context.Context) error {
+	redirectUrl := "login?target=" + c.HttpRequest().URL.Path
+	log.Println("Redirecting to login page: %s", redirectUrl)
+	return goweb.Respond.WithRedirect(c, redirectUrl)
+}
+
 func main() {
 
-	RedirectToLoginPage := func(c context.Context) error {
-		log.Println("Redirecting to login page...")
-		return goweb.Respond.WithRedirect(c, "login?target="+c.HttpRequest().URL.Path)
-	}
-
 	authStore := new(ExampleAuthStore)
+
+	/*
+		Step 2. Create an configure an AuthManager
+
+		  - Give it the authStore you created earlier
+		  - Give it all the providers you wish to support, remember you'll
+		    have to configure each provider for your application by specifying
+		    Client ID, secrets, callback URLs and scopes etc. depending on the
+		    auth type.
+	*/
 	authManager := gomniauth.NewManager(authStore,
 		providers.Google("id", "secret", "http://www.localhost.com/auth/google/callback"),
 		providers.Github("3d1e6ba69036e0624b61", "7e8938928d802e7582908a5eadaaaf22d64babf1", "http://www.localhost.com/auth/github/callback", "user"))
@@ -117,7 +130,6 @@ func main() {
 			cookie.MaxAge = -1
 			cookie.Value = ""
 			cookie.Path = "/"
-			cookie.Domain = "www.localhost.com"
 			http.SetCookie(c.HttpResponseWriter(), cookie)
 		}
 
@@ -203,9 +215,8 @@ func main() {
 
 			// save their session ID in the cookie
 			cookie := &http.Cookie{Name: CookieNameSession,
-				Value:  returnedSessionId,
-				Path:   "/",
-				Domain: "www.localhost.com",
+				Value: returnedSessionId,
+				Path:  "/",
 			}
 			http.SetCookie(c.HttpResponseWriter(), cookie)
 

@@ -1,7 +1,6 @@
-package gomniauth
+package common
 
 import (
-	"github.com/stretchr/gomniauth/common"
 	"github.com/stretchr/stew/objects"
 	"github.com/stretchr/testify/mock"
 )
@@ -18,8 +17,8 @@ func (p *TestProvider) Config() objects.Map {
 	return p.Called().Get(0).(objects.Map)
 }
 
-func (p *TestProvider) AuthType() common.AuthType {
-	return p.Called().Get(0).(common.AuthType)
+func (p *TestProvider) AuthType() AuthType {
+	return p.Called().Get(0).(AuthType)
 }
 
 type TestProvider2 struct {
@@ -34,6 +33,6 @@ func (p *TestProvider2) Config() objects.Map {
 	return p.Called().Get(0).(objects.Map)
 }
 
-func (p *TestProvider2) AuthType() common.AuthType {
-	return p.Called().Get(0).(common.AuthType)
+func (p *TestProvider2) AuthType() AuthType {
+	return p.Called().Get(0).(AuthType)
 }

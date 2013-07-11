@@ -1,7 +1,6 @@
-package gomniauth
+package common
 
 import (
-	"github.com/stretchr/gomniauth/common"
 	"github.com/stretchr/stew/objects"
 )
 
@@ -13,6 +12,6 @@ type Provider interface {
 	// Config gets the default configuration for this Provider.
 	Config() objects.Map
 
-	// common.AuthType gets the common.AuthType that this provider uses.
-	AuthType() common.AuthType
+	// common.AuthType gets the AuthType that this provider uses.
+	AuthType() AuthType
 }

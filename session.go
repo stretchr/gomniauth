@@ -30,7 +30,7 @@ func (s *Session) IsLoggedIn() bool {
 	return false
 }
 
-func (s *Session) GetAuthURL(provider Provider, state objects.Map) (string, error) {
+func (s *Session) GetAuthURL(provider common.Provider, state objects.Map) (string, error) {
 
 	switch provider.AuthType() {
 	case common.AuthTypeOAuth2:
@@ -54,7 +54,7 @@ func (s *Session) GetAuthURL(provider Provider, state objects.Map) (string, erro
 
 }
 
-func (s *Session) HandleCallback(provider Provider, id string, request *http.Request) error {
+func (s *Session) HandleCallback(provider common.Provider, id string, request *http.Request) error {
 
 	switch provider.AuthType() {
 	case common.AuthTypeOAuth2:

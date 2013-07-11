@@ -31,7 +31,7 @@ func TestSessionGetAuthURL(t *testing.T) {
 
 	state := objects.NewMap("id", id, "targetUrl", targetUrl)
 
-	provider := new(TestProvider)
+	provider := new(common.TestProvider)
 	provider.On("Config").Return(objects.NewMap("clientId", "CLIENTID",
 		"redirectURL", "http://www.test.com/",
 		"accessType", "online",

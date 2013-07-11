@@ -2,6 +2,7 @@ package providers
 
 import (
 	"github.com/stretchr/gomniauth/common"
+	"github.com/stretchr/gomniauth/oauth2"
 	"github.com/stretchr/stew/objects"
 	"strings"
 )
@@ -31,7 +32,7 @@ func (p *GithubProvider) AuthType() common.AuthType {
 	return common.AuthTypeOAuth2
 }
 
-var Github = func(clientId, clientSecret, redirectURL string, scope ...string) *GithubProvider {
+var Github oauth2.ProviderFunc = func(clientId, clientSecret, redirectURL string, scope ...string) common.Provider {
 	p := new(GithubProvider)
 	p.Config().
 		Set("clientId", clientId).
