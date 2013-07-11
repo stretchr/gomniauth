@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/gomniauth/providers"
 	"github.com/stretchr/goweb"
 	"github.com/stretchr/goweb/context"
+	"github.com/stretchr/stew/objects"
 	"log"
 	"net"
 	"net/http"
@@ -21,7 +22,7 @@ import (
 
 */
 
-var Address string = ":8080"
+var Address string = ":80"
 
 const (
 	CookieNameSession string = "session"
@@ -29,39 +30,98 @@ const (
 
 func main() {
 
+	RedirectToLoginPage := func(c context.Context) error {
+		log.Println("Redirecting to login page...")
+		return goweb.Respond.WithRedirect(c, "login?target="+c.HttpRequest().URL.Path)
+	}
+
 	authStore := new(ExampleAuthStore)
 	authManager := gomniauth.NewManager(authStore,
-		providers.Google("id", "secret", "http://localhost:8080/auth/google/login"),
-		providers.Github("3d1e6ba69036e0624b61", "7e8938928d802e7582908a5eadaaaf22d64babf1", "http://localhost:8080/auth/github/callback", "user"))
+		providers.Google("id", "secret", "http://www.localhost.com/auth/google/callback"),
+		providers.Github("3d1e6ba69036e0624b61", "7e8938928d802e7582908a5eadaaaf22d64babf1", "http://www.localhost.com/auth/github/callback", "user"))
+
+	// TODO: make the callback dynamic
+
+	goweb.Map("GET", "/", func(c context.Context) error {
+
+		return goweb.Respond.With(c, http.StatusOK, []byte(`
+
+			<html>
+				<head>
+					<title>Welcome</title>
+				</head>
+				<body>
+					<h1>Omniauth Example Web app</h1>
+					<p>
+					</p>
+					<ul>
+						<li>
+							To get started, just try accessing this <a href="/protected">protected resource</a>.
+						</li>
+					</ul>
+				</body>
+			</html>
+
+		`))
+
+	})
 
 	// GET /protected
 	//
 	// Attempts to get a protected resource.
 	goweb.Map("GET", "/protected", func(c context.Context) error {
 
+		log.Print("User tried to access protected resource")
+
 		sessionCookie, sessionCookieErr := c.HttpRequest().Cookie(CookieNameSession)
+
+		log.Printf("%s", c.HttpRequest().Cookies())
+		log.Printf("Cookie: %s\nCookie Error: %s", sessionCookie, sessionCookieErr)
 
 		// do they have a session ID?
 		if sessionCookie == nil || sessionCookieErr != nil {
 			// no - they will need to login
-			goweb.Respond.WithRedirect(c, "login")
-			return nil
+			return RedirectToLoginPage(c)
 		}
 
-		// get the authSession
-		authSession := authManager.WithID(sessionCookie.Value)
+		return goweb.Respond.With(c, http.StatusOK, []byte(`
 
-		// are they logged in?
-		if !authSession.IsLoggedIn() {
-			// no - they will need to login
-			goweb.Respond.WithRedirect(c, "login")
-			return nil
+			<html>
+				<head>
+					<title>Welcome</title>
+				</head>
+				<body>
+					<h1>Protected Resource</h1>
+					<p>
+					</p>
+					<ul>
+						<li>
+							You have successfully accessed the protected resource.
+						</li>
+						<li>
+							Now you can <a href="/logout">log out</a>
+						</li>
+					</ul>
+				</body>
+			</html>
+
+		`))
+	})
+
+	goweb.Map("GET", "/logout", func(c context.Context) error {
+
+		log.Printf("Logging out: %s", c.HttpRequest().Cookies())
+
+		// delete all cookies
+		for _, cookie := range c.HttpRequest().Cookies() {
+			cookie.MaxAge = -1
+			cookie.Value = ""
+			cookie.Path = "/"
+			cookie.Domain = "www.localhost.com"
+			http.SetCookie(c.HttpResponseWriter(), cookie)
 		}
 
-		// the user is logged in, they now have access to the
-		// resources.
-
-		return goweb.Respond.With(c, http.StatusOK, []byte("You are successfully logged in."))
+		return goweb.Respond.WithRedirect(c, "/")
 
 	})
 
@@ -72,6 +132,9 @@ func main() {
 
 		// create them a session ID
 		sessionId := gomniauth.CreateSessionID()
+
+		// get the target URL (URL to redirect to after they've logged in)
+		targetUrl := c.QueryValue("target")
 
 		// get the authSession
 		authSession := authManager.WithID(sessionId)
@@ -89,7 +152,8 @@ func main() {
 
 		for providerName, provider := range authManager.Providers() {
 
-			authUrl, _ := authSession.GetAuthURL(provider, sessionId)
+			// TODO: Make StateWith(id, target) or similar
+			authUrl, _ := authSession.GetAuthURL(provider, objects.NewMap("id", sessionId, "targetUrl", targetUrl))
 
 			c.HttpResponseWriter().Write([]byte(`
 						<li>
@@ -110,7 +174,7 @@ func main() {
 
 	})
 
-	// GET /auth/oauth2/{provider}/login
+	// GET /auth/oauth2/{provider}/callback
 	goweb.Map("/auth/{provider}/callback", func(c context.Context) error {
 
 		provider, providerOk := authManager.Providers()[c.PathValue("provider")]
@@ -119,7 +183,12 @@ func main() {
 			return errors.New("Unsupported provider")
 		}
 
-		state := gomniauth.StateFromRequest(provider.AuthType(), c.HttpRequest())
+		state, stateErr := gomniauth.StateFromRequest(provider.AuthType(), c.HttpRequest())
+
+		if stateErr != nil {
+			return stateErr
+		}
+
 		returnedSessionId, sessionErr := gomniauth.IDFromState(provider.AuthType(), state)
 
 		if sessionErr != nil {
@@ -133,7 +202,42 @@ func main() {
 		if callbackErr != nil {
 
 			// save their session ID in the cookie
-			c.HttpRequest().AddCookie(&http.Cookie{Name: CookieNameSession, Value: returnedSessionId})
+			cookie := &http.Cookie{Name: CookieNameSession,
+				Value:  returnedSessionId,
+				Path:   "/",
+				Domain: "www.localhost.com",
+			}
+			http.SetCookie(c.HttpResponseWriter(), cookie)
+
+			log.Printf("User has been logged in with session ID: %s", returnedSessionId)
+			log.Printf("Set cookie: %s", cookie)
+
+			targetUrl := gomniauth.TargetURLFromState(provider.AuthType(), state)
+
+			if len(targetUrl) == 0 {
+				targetUrl = "/"
+			}
+
+			goweb.Respond.WithRedirect(c, targetUrl)
+
+			/*
+				c.HttpResponseWriter().Write([]byte(`
+					<html>
+						<head>
+				`))
+				c.HttpResponseWriter().Write([]byte("<meta-equiv name=\"refresh\" content=\"0;URL='" + targetUrl + "\">"))
+				c.HttpResponseWriter().Write([]byte(`
+						</head>
+						<body>
+				`))
+
+				c.HttpResponseWriter().Write([]byte("<a href='" + targetUrl + "'>Click here</a> to continue."))
+
+				c.HttpResponseWriter().Write([]byte(`
+						</body>
+					</html>
+				`))
+			*/
 
 		}
 
