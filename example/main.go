@@ -38,16 +38,25 @@ var RedirectToLoginPage = func(c context.Context) error {
 
 func main() {
 
+	/*
+		Step 1. Create an AuthStore
+
+			- An AuthStore is responsible for caching your auth tokens so you
+			  don't have to send the user off to reauthenticate every time you
+			  want to access their remote data.
+
+	*/
 	authStore := new(ExampleAuthStore)
 
 	/*
-		Step 2. Create an configure an AuthManager
+		Step 2. Create and configure an AuthManager
 
 		  - Give it the authStore you created earlier
 		  - Give it all the providers you wish to support, remember you'll
 		    have to configure each provider for your application by specifying
 		    Client ID, secrets, callback URLs and scopes etc. depending on the
 		    auth type.
+
 	*/
 	authManager := gomniauth.NewManager(authStore,
 		providers.Google("id", "secret", "http://www.localhost.com/auth/google/callback"),
@@ -96,6 +105,8 @@ func main() {
 			// no - they will need to login
 			return RedirectToLoginPage(c)
 		}
+
+		// TODO: check their token also to make sure it's valid
 
 		return goweb.Respond.With(c, http.StatusOK, []byte(`
 

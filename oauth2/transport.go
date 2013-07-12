@@ -155,13 +155,15 @@ func (t *Transport) updateToken(tok *Token, v url.Values) error {
 
 // Exchange takes a code and gets access Token from the remote server.
 func (t *Transport) Exchange(code string) (*Token, error) {
+
 	if t.Config == nil {
 		return nil, OAuth2Error{"Exchange", "no Config supplied"}
 	}
 
-	// If the transport or the cache already has a token, it is
+	// If the transport already has a token, it is
 	// passed to `updateToken` to preserve existing refresh token.
 	tok := t.Token
+
 	if tok == nil {
 		tok = new(Token)
 	}
