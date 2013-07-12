@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/stretchr/gomniauth"
@@ -9,6 +10,7 @@ import (
 	"github.com/stretchr/goweb"
 	"github.com/stretchr/goweb/context"
 	"github.com/stretchr/stew/objects"
+	"io/ioutil"
 	"log"
 	"net"
 	"net/http"
@@ -131,7 +133,7 @@ func main() {
 			return RedirectToLoginPage(c)
 		}
 
-		return goweb.Respond.With(c, http.StatusOK, []byte(`
+		output := `
 
 			<html>
 				<head>
@@ -142,6 +144,18 @@ func main() {
 					<h3>
 						You have successfully accessed the protected resource.
 					</h3>
+					<p>
+						Here's a bit about you:
+						<table border="1" bordercolor="#000000" style="background-color:#EAEAEA" width="100%" cellpadding="3" cellspacing="2">
+							<tr>
+								<td>Key</td>
+								<td>Value</td>
+							</tr>
+							<tr><td></td><td></td></tr>
+							$$$
+						</table>
+					</p>
+					<p></p>
 					<ul>
 						<li>
 							Now you can <a href="/logout">log out</a>
@@ -153,7 +167,44 @@ func main() {
 				</body>
 			</html>
 
-		`))
+		`
+
+		client, err := session.AuthenticatedClient()
+
+		if err != nil {
+			//TODO: make this not bad
+			return goweb.Respond.WithStatus(c, http.StatusInternalServerError)
+		}
+
+		url := ""
+
+		switch session.Provider().Name() {
+		case "Github":
+			url = "https://api.github.com/user"
+
+		case "Google":
+		}
+
+		resp, err := client.Get(url)
+		if err != nil {
+			//TODO: make this not bad
+			return goweb.Respond.WithStatus(c, http.StatusInternalServerError)
+		}
+		defer resp.Body.Close()
+
+		body, _ := ioutil.ReadAll(resp.Body)
+
+		var userData map[string]interface{}
+		json.Unmarshal(body, &userData)
+
+		replacement := ""
+		for k, v := range userData {
+			replacement += fmt.Sprintf("<tr><td>%s</td><td>%v</td></tr>", k, v)
+		}
+
+		output = strings.Replace(output, "$$$", replacement, 1)
+
+		return goweb.Respond.With(c, http.StatusOK, []byte(output))
 	})
 
 	goweb.Map("GET", "/logout", func(c context.Context) error {
