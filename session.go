@@ -100,6 +100,39 @@ func (s *Session) GetAuthURL(provider common.Provider, state objects.Map) (strin
 
 }
 
+func (s *Session) AuthenticatedClient() (*http.Client, error) {
+
+	switch s.provider.AuthType() {
+	case common.AuthTypeOAuth2:
+
+		// Set the token on transport IF we have one in the AuthStore
+		auth, authStoreErr := s.Manager().AuthStore().GetAuth(s.id)
+
+		if authStoreErr != nil {
+			return authStoreErr
+		}
+
+		// set the token
+		if auth == nil {
+			return nil, errors.New("gomniauth: AuthenticatedClient: The AuthStore returned a nil Auth, so an AuthenticatedClient cannot be provided.")
+		}
+
+		// make a transport
+		// make the config
+		var config = &oauth2.Config{
+			Map: s.provider.Config().Copy(),
+		}
+		transport := &oauth2.Transport{Config: config}
+		transport.Token = oauth2.NewTokenFromAuth(auth)
+
+		return transport.Client(), nil
+
+	}
+
+	return errors.New("gomniauth: AuthenticatedClient: Unsupported common.AuthType: " + s.provider.AuthType().String())
+
+}
+
 // HandleCallback handles the callback (from the third-party authenticator) and completes
 // the process of authenticating the user.
 func (s *Session) HandleCallback(request *http.Request) error {
