@@ -29,6 +29,13 @@ import (
 	NOTE: The domain is set to www.localhost.com, so you should route this
 	      properly by editing your /etc/hosts file.
 
+
+	Credit:
+
+		The auth buttons were made by this guy:
+
+			http://nicolasgallagher.com/lab/css3-social-signin-buttons/
+
 */
 
 var Address string = ":80"
