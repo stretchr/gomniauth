@@ -12,7 +12,7 @@ type GoogleProvider struct {
 }
 
 func (p *GoogleProvider) Name() string {
-	return "google"
+	return "Google"
 }
 
 func (p *GoogleProvider) Config() objects.Map {

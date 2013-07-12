@@ -12,7 +12,7 @@ type GithubProvider struct {
 }
 
 func (p *GithubProvider) Name() string {
-	return "github"
+	return "GitHub"
 }
 
 func (p *GithubProvider) Config() objects.Map {

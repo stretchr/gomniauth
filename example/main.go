@@ -205,6 +205,7 @@ func main() {
 			<html>
 				<head>
 					<title>Login</title>
+					<link rel="stylesheet" href="/assets/authbuttons/auth-buttons.css">
 				</head>
 				<body>
 					<h2>Login</h2>
@@ -218,9 +219,9 @@ func main() {
 			authUrl, _ := authSession.GetAuthURL(provider, objects.NewMap("id", sessionId, "targetUrl", targetUrl))
 
 			c.HttpResponseWriter().Write([]byte(`
-						<li>
+						<li style='padding:5px;list-item:none'>
 			`))
-			c.HttpResponseWriter().Write([]byte(fmt.Sprintf("<a href=\"%s\">%s</a>", authUrl, providerName)))
+			c.HttpResponseWriter().Write([]byte(fmt.Sprintf("<a class='btn-auth btn-%s' href=\"%s\">Sign in with %s</a>", providerName, authUrl, provider.Name())))
 			c.HttpResponseWriter().Write([]byte(`
 						</li>
 			`))
@@ -281,29 +282,13 @@ func main() {
 
 			goweb.Respond.WithRedirect(c, targetUrl)
 
-			/*
-				c.HttpResponseWriter().Write([]byte(`
-					<html>
-						<head>
-				`))
-				c.HttpResponseWriter().Write([]byte("<meta-equiv name=\"refresh\" content=\"0;URL='" + targetUrl + "\">"))
-				c.HttpResponseWriter().Write([]byte(`
-						</head>
-						<body>
-				`))
-
-				c.HttpResponseWriter().Write([]byte("<a href='" + targetUrl + "'>Click here</a> to continue."))
-
-				c.HttpResponseWriter().Write([]byte(`
-						</body>
-					</html>
-				`))
-			*/
-
 		}
 
 		return nil
 	})
+
+	// expose the assets too
+	goweb.MapStatic("assets", "assets")
 
 	/*
 
