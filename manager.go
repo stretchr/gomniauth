@@ -31,6 +31,11 @@ func NewManager(authStore AuthStore, providers ...common.Provider) *Manager {
 	return m
 }
 
+// AuthStore gets the AuthStore assocaited with this Manager.
+func (m *Manager) AuthStore() AuthStore {
+	return m.authStore
+}
+
 // Providers gets the map of currently installed Providers.
 func (m *Manager) Providers() map[string]common.Provider {
 	return m.providers
@@ -48,6 +53,6 @@ func (m *Manager) Provider(name string) common.Provider {
 }
 
 // WithID creates a new Session with the specified ID.
-func (m *Manager) WithID(id string) *Session {
-	return NewSession(m, id)
+func (m *Manager) NewSession(id string, provider common.Provider) *Session {
+	return NewSession(m, id, provider)
 }

@@ -19,6 +19,7 @@ func TestNewManager(t *testing.T) {
 
 	if assert.NotNil(t, m) {
 		assert.Equal(t, authStore, m.authStore)
+		assert.Equal(t, authStore, m.AuthStore())
 		if assert.Equal(t, 2, len(m.providers)) {
 			assert.Equal(t, prov1, m.providers["prov1"])
 			assert.Equal(t, prov2, m.providers["prov2"])
@@ -92,14 +93,16 @@ func TestManager_Providers(t *testing.T) {
 
 }
 
-func TestManager_WithID(t *testing.T) {
+func TestManager_NewSession(t *testing.T) {
 
 	id := "abc123"
 
 	man := new(Manager)
-	session := man.WithID(id)
+	prov := new(common.TestProvider)
+	session := man.NewSession(id, prov)
 
 	assert.Equal(t, session.Manager(), man)
 	assert.Equal(t, session.ID(), id)
+	assert.Equal(t, session.Provider(), prov)
 
 }

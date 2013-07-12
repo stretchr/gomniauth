@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/stretchr/gomniauth"
+	"github.com/stretchr/gomniauth/common"
 	"github.com/stretchr/gomniauth/providers"
 	"github.com/stretchr/goweb"
 	"github.com/stretchr/goweb/context"
@@ -13,12 +14,20 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"time"
 )
 
 /*
 
   This is a full web-stack example showing how to use gomniauth.
+
+	To run this app, just do:
+
+	    clear; go build main.go; sudo ./main; rf main;
+
+	NOTE: The domain is set to www.localhost.com, so you should route this
+	      properly by editing your /etc/hosts file.
 
 */
 
@@ -32,7 +41,7 @@ const (
 // passing the current page as the 'target' parameter.
 var RedirectToLoginPage = func(c context.Context) error {
 	redirectUrl := "login?target=" + c.HttpRequest().URL.Path
-	log.Println("Redirecting to login page: %s", redirectUrl)
+	log.Println("Example app: Redirecting to login page: %s", redirectUrl)
 	return goweb.Respond.WithRedirect(c, redirectUrl)
 }
 
@@ -46,7 +55,7 @@ func main() {
 			  want to access their remote data.
 
 	*/
-	authStore := new(ExampleAuthStore)
+	authStore := &ExampleAuthStore{make(map[string]*common.Auth)}
 
 	/*
 		Step 2. Create and configure an AuthManager
@@ -93,12 +102,11 @@ func main() {
 	// Attempts to get a protected resource.
 	goweb.Map("GET", "/protected", func(c context.Context) error {
 
-		log.Print("User tried to access protected resource")
+		log.Print("Example app: User tried to access protected resource")
 
 		sessionCookie, sessionCookieErr := c.HttpRequest().Cookie(CookieNameSession)
 
-		log.Printf("%s", c.HttpRequest().Cookies())
-		log.Printf("Cookie: %s\nCookie Error: %s", sessionCookie, sessionCookieErr)
+		log.Printf("Example app: Cookies: %s", c.HttpRequest().Cookies())
 
 		// do they have a session ID?
 		if sessionCookie == nil || sessionCookieErr != nil {
@@ -106,7 +114,15 @@ func main() {
 			return RedirectToLoginPage(c)
 		}
 
-		// TODO: check their token also to make sure it's valid
+		segs := strings.Split(sessionCookie.Value, ":")
+		providerName := segs[0]
+		sessionId := segs[1]
+
+		session := authManager.NewSession(sessionId, authManager.Provider(providerName))
+		if authed, _ := session.IsAuthenticated(); !authed {
+			// no - they will need to login
+			return RedirectToLoginPage(c)
+		}
 
 		return goweb.Respond.With(c, http.StatusOK, []byte(`
 
@@ -116,14 +132,15 @@ func main() {
 				</head>
 				<body>
 					<h1>Protected Resource</h1>
-					<p>
-					</p>
+					<h3>
+						You have successfully accessed the protected resource.
+					</h3>
 					<ul>
 						<li>
-							You have successfully accessed the protected resource.
+							Now you can <a href="/logout">log out</a>
 						</li>
 						<li>
-							Now you can <a href="/logout">log out</a>
+							Or you can <a href="/deauth">expire the internal auth token</a>
 						</li>
 					</ul>
 				</body>
@@ -134,7 +151,7 @@ func main() {
 
 	goweb.Map("GET", "/logout", func(c context.Context) error {
 
-		log.Printf("Logging out: %s", c.HttpRequest().Cookies())
+		log.Printf("Example app: Logging out")
 
 		// delete all cookies
 		for _, cookie := range c.HttpRequest().Cookies() {
@@ -144,6 +161,28 @@ func main() {
 			http.SetCookie(c.HttpResponseWriter(), cookie)
 		}
 
+		return goweb.Respond.WithRedirect(c, "/")
+
+	})
+
+	goweb.Map("GET", "/deauth", func(c context.Context) error {
+
+		log.Printf("Example app: Forgetting user (deleting their auth token in the AuthStore)")
+
+		sessionCookie, sessionCookieErr := c.HttpRequest().Cookie(CookieNameSession)
+
+		// do they have a session ID?
+		if sessionCookie == nil || sessionCookieErr != nil {
+			// no - they will need to login
+			return RedirectToLoginPage(c)
+		}
+
+		segs := strings.Split(sessionCookie.Value, ":")
+		sessionId := segs[1]
+
+		authManager.AuthStore().DeleteAuth(sessionId)
+
+		// send them home
 		return goweb.Respond.WithRedirect(c, "/")
 
 	})
@@ -160,7 +199,7 @@ func main() {
 		targetUrl := c.QueryValue("target")
 
 		// get the authSession
-		authSession := authManager.WithID(sessionId)
+		authSession := authManager.NewSession(sessionId, nil)
 
 		c.HttpResponseWriter().Write([]byte(`
 			<html>
@@ -219,20 +258,20 @@ func main() {
 		}
 
 		// get the authSession
-		authSession := authManager.WithID(returnedSessionId)
-		callbackErr := authSession.HandleCallback(provider, returnedSessionId, c.HttpRequest())
+		authSession := authManager.NewSession(returnedSessionId, provider)
+		callbackErr := authSession.HandleCallback(c.HttpRequest())
 
 		if callbackErr != nil {
 
 			// save their session ID in the cookie
 			cookie := &http.Cookie{Name: CookieNameSession,
-				Value: returnedSessionId,
+				Value: fmt.Sprintf("%s:%s", provider.Name(), returnedSessionId),
 				Path:  "/",
 			}
 			http.SetCookie(c.HttpResponseWriter(), cookie)
 
-			log.Printf("User has been logged in with session ID: %s", returnedSessionId)
-			log.Printf("Set cookie: %s", cookie)
+			log.Printf("Example app: User has been logged in with session ID: %s", returnedSessionId)
+			log.Printf("  Set cookie: %s", cookie)
 
 			targetUrl := gomniauth.TargetURLFromState(provider.AuthType(), state)
 
@@ -299,6 +338,7 @@ func main() {
 	log.Println("")
 	log.Println("Try some of these routes:")
 	log.Printf("%s", goweb.DefaultHttpHandler())
+	log.Println("\n\n")
 
 	go func() {
 		for _ = range c {
@@ -335,13 +375,22 @@ func main() {
 // ExampleAuthStore is an AuthStore that just keeps the Auth objects
 // in memory.
 type ExampleAuthStore struct {
-	auths map[string]*gomniauth.Auth
+	auths map[string]*common.Auth
 }
 
-func (s *ExampleAuthStore) GetAuth(id string) (*gomniauth.Auth, error) {
+func (s *ExampleAuthStore) GetAuth(id string) (*common.Auth, error) {
+	log.Printf("ExampleAuthStore: GetAuth %s", id)
+	log.Printf("  returning: %s", s.auths[id])
 	return s.auths[id], nil
 }
-func (s *ExampleAuthStore) PutAuth(id string, auth *gomniauth.Auth) error {
+func (s *ExampleAuthStore) PutAuth(id string, auth *common.Auth) error {
+	log.Printf("ExampleAuthStore: PutAuth %s", id)
+	log.Printf("  putting: %s", s.auths[id])
 	s.auths[id] = auth
+	return nil
+}
+func (s *ExampleAuthStore) DeleteAuth(id string) error {
+	log.Printf("ExampleAuthStore: DeleteAuth: %s", id)
+	delete(s.auths, id)
 	return nil
 }

@@ -1,4 +1,4 @@
-package gomniauth
+package common
 
 import (
 	"github.com/stretchr/stew/objects"

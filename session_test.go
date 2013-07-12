@@ -12,11 +12,13 @@ func TestNewSession(t *testing.T) {
 
 	manager := new(Manager)
 	id := "abc123"
-	s := NewSession(manager, id)
+	prov := new(common.TestProvider)
+	s := NewSession(manager, id, prov)
 
 	if assert.NotNil(t, s) {
 		assert.Equal(t, manager, s.Manager())
 		assert.Equal(t, id, s.ID())
+		assert.Equal(t, prov, s.Provider())
 	}
 
 }
@@ -26,8 +28,9 @@ func TestSessionGetAuthURL(t *testing.T) {
 	manager := new(Manager)
 	id := "abc123"
 	targetUrl := "http://www.google.com/"
+	prov := new(common.TestProvider)
 
-	s := NewSession(manager, id)
+	s := NewSession(manager, id, prov)
 
 	state := objects.NewMap("id", id, "targetUrl", targetUrl)
 
@@ -45,6 +48,6 @@ func TestSessionGetAuthURL(t *testing.T) {
 		assert.Equal(t, "?access_type=online&approval_prompt=force&client_id=CLIENTID&redirect_uri=http%3A%2F%2Fwww.test.com%2F&response_type=code&scope=&state=eyJpZCI6ImFiYzEyMyIsInRhcmdldFVybCI6Imh0dHA6Ly93d3cuZ29vZ2xlLmNvbS8ifQ%3D%3D", url)
 	}
 
-	mock.AssertExpectationsForObjects(t, provider.Mock)
+	mock.AssertExpectationsForObjects(t, provider.Mock, prov.Mock)
 
 }
