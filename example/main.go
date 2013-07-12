@@ -77,7 +77,7 @@ func main() {
 
 	*/
 	authManager := gomniauth.NewManager(authStore,
-		providers.Google("id", "secret", "http://www.localhost.com/auth/google/callback"),
+		providers.Google("815669121291.apps.googleusercontent.com", "QrjJ2WevjIp1CbJxU18449RS", "http://www.localhost.com/auth/google/callback", "profile"),
 		providers.Github("3d1e6ba69036e0624b61", "7e8938928d802e7582908a5eadaaaf22d64babf1", "http://www.localhost.com/auth/github/callback", "user"))
 
 	// TODO: make the callback dynamic
@@ -181,8 +181,9 @@ func main() {
 		switch session.Provider().Name() {
 		case "Github":
 			url = "https://api.github.com/user"
-
 		case "Google":
+			//url = "https://www.googleapis.com/plus/v1/people/me"
+			url = "https://www.googleapis.com/oauth2/v3/userinfo"
 		}
 
 		resp, err := client.Get(url)
