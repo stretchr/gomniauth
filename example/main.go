@@ -372,12 +372,12 @@ type ExampleAuthStore struct {
 
 func (s *ExampleAuthStore) GetAuth(id string) (*common.Auth, error) {
 	log.Printf("ExampleAuthStore: GetAuth %s", id)
-	log.Printf("  returning: %s", s.auths[id])
+	log.Printf("  returning: %v", s.auths[id])
 	return s.auths[id], nil
 }
 func (s *ExampleAuthStore) PutAuth(id string, auth *common.Auth) error {
 	log.Printf("ExampleAuthStore: PutAuth %s", id)
-	log.Printf("  putting: %s", s.auths[id])
+	log.Printf("  putting: %v", auth)
 	s.auths[id] = auth
 	return nil
 }
