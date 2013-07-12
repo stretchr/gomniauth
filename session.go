@@ -109,7 +109,7 @@ func (s *Session) AuthenticatedClient() (*http.Client, error) {
 		auth, authStoreErr := s.Manager().AuthStore().GetAuth(s.id)
 
 		if authStoreErr != nil {
-			return authStoreErr
+			return nil, authStoreErr
 		}
 
 		// set the token
@@ -129,7 +129,7 @@ func (s *Session) AuthenticatedClient() (*http.Client, error) {
 
 	}
 
-	return errors.New("gomniauth: AuthenticatedClient: Unsupported common.AuthType: " + s.provider.AuthType().String())
+	return nil, errors.New("gomniauth: AuthenticatedClient: Unsupported common.AuthType: " + s.provider.AuthType().String())
 
 }
 
