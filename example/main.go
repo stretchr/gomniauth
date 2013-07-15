@@ -26,7 +26,7 @@ import (
 
 	To run this app, just do:
 
-	    clear; go build main.go; sudo ./main; rf main;
+	    clear; go build main.go; sudo ./main; rm -f main;
 
 	NOTE: The domain is set to www.localhost.com, so you should route this
 	      properly by editing your /etc/hosts file.
@@ -144,24 +144,31 @@ func main() {
 					<h3>
 						You have successfully accessed the protected resource.
 					</h3>
-					<p>
-						Here's a bit about you:
-						<table border="1" bordercolor="#000000" style="background-color:#EAEAEA" width="100%" cellpadding="3" cellspacing="2">
-							<tr>
-								<td>Key</td>
-								<td>Value</td>
-							</tr>
-							<tr><td></td><td></td></tr>
-							$$$
-						</table>
-					</p>
-					<p></p>
+					<h3>Log out?</h3>
 					<ul>
 						<li>
-							Now you can <a href="/logout">log out</a>
+							If you <a href="/logout">delete your session cookie</a> you will be logged out
 						</li>
 						<li>
-							Or you can <a href="/deauth">expire the internal auth token</a>
+							Or you can <a href="/deauth">expire the internal auth token</a> - which will have
+							the same effect.
+						</li>
+					</ul>
+					<h3>
+						Here's a bit about you
+					</h3>
+					<table border="1" bordercolor="#000000" style="background-color:#EAEAEA" width="100%" cellpadding="3" cellspacing="2">
+						<tr>
+							<td>Key</td>
+							<td>Value</td>
+						</tr>
+						<tr><td></td><td></td></tr>
+						$$$
+					</table>
+					<ul>
+						<li>
+							Try logging in with a different provider to see different information.
+							Of course, you'll have to <a href="/logout">log out</a> first.
 						</li>
 					</ul>
 				</body>
