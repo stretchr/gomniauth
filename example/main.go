@@ -264,9 +264,6 @@ func main() {
 		// get the target URL (URL to redirect to after they've logged in)
 		targetUrl := c.QueryValue("target")
 
-		// get the authSession
-		authSession := authManager.NewSession(sessionId, nil)
-
 		c.HttpResponseWriter().Write([]byte(`
 			<html>
 				<head>
@@ -282,7 +279,7 @@ func main() {
 		for providerName, provider := range authManager.Providers() {
 
 			// TODO: Make StateWith(id, target) or similar
-			authUrl, _ := authSession.GetAuthURL(provider, objects.NewMap("id", sessionId, "targetUrl", targetUrl))
+			authUrl, _ := gomniauth.GetAuthURL(provider, objects.NewMap("id", sessionId, "targetUrl", targetUrl))
 
 			c.HttpResponseWriter().Write([]byte(`
 						<li style='padding:5px;list-item:none'>
