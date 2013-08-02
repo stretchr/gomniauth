@@ -2,6 +2,7 @@ package oauth2
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"mime"
 	"net/http"
@@ -118,15 +119,22 @@ func (t *Transport) updateToken(tok *Token, v url.Values) error {
 	}
 
 	content, _, _ := mime.ParseMediaType(r.Header.Get("Content-Type"))
+
 	switch content {
 	case "application/x-www-form-urlencoded", "text/plain":
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
 			return err
 		}
+
 		vals, err := url.ParseQuery(string(body))
 		if err != nil {
 			return err
+		}
+
+		// did an error occur?
+		if len(vals.Get("error")) > 0 {
+			return OAuth2Error{"updateToken", fmt.Sprintf("Server responded with an error: %s", vals.Get("error"))}
 		}
 
 		b.Access = vals.Get("access_token")
@@ -150,6 +158,7 @@ func (t *Transport) updateToken(tok *Token, v url.Values) error {
 	} else {
 		tok.Expiry = time.Now().Add(b.ExpiresIn)
 	}
+
 	return nil
 }
 

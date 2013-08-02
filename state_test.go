@@ -8,11 +8,24 @@ import (
 	"testing"
 )
 
+const securitykey = "securitykey"
+
+func TestSignedState(t *testing.T) {
+
+	state := objects.NewMap("id", "abc123", "targetUrl", "http://www.google.com/")
+	signed, err := state.SignedBase64(securitykey)
+
+	if assert.NoError(t, err) {
+		assert.Equal(t, "eyJpZCI6ImFiYzEyMyIsInRhcmdldFVybCI6Imh0dHA6Ly93d3cuZ29vZ2xlLmNvbS8ifQ==_e04e352ec9b2d57faf07a1c786e690bddfaa7493", signed)
+	}
+
+}
+
 func TestStateFromRequest(t *testing.T) {
 
-	r, _ := http.NewRequest("GET", "http://www.test.com/?state=eyJpZCI6ImFiYzEyMyIsInRhcmdldFVybCI6Imh0dHA6Ly93d3cuZ29vZ2xlLmNvbS8ifQ%3D%3D", nil)
+	r, _ := http.NewRequest("GET", "http://www.test.com/?state=eyJpZCI6ImFiYzEyMyIsInRhcmdldFVybCI6Imh0dHA6Ly93d3cuZ29vZ2xlLmNvbS8ifQ==_e04e352ec9b2d57faf07a1c786e690bddfaa7493", nil)
 
-	s, err := StateFromRequest(common.AuthTypeOAuth2, r)
+	s, err := StateFromRequest(common.AuthTypeOAuth2, r, securitykey)
 
 	if assert.NoError(t, err) {
 		if assert.NotNil(t, s) {
@@ -23,24 +36,11 @@ func TestStateFromRequest(t *testing.T) {
 
 }
 
-func TestIDFromState(t *testing.T) {
+func TestStateWithID(t *testing.T) {
 
-	s := objects.NewMap("id", "abc123")
-
-	id, err := IDFromState(common.AuthTypeOAuth2, s)
-
-	if assert.NoError(t, err) {
-		assert.Equal(t, id, "abc123")
+	state := StateWithID("id")
+	if assert.NotNil(t, state) {
+		assert.Equal(t, "id", state["id"])
 	}
-
-}
-
-func TestTargetURLFromState(t *testing.T) {
-
-	s := objects.NewMap("targetUrl", "http://www.test.com/")
-
-	targetUrl := TargetURLFromState(common.AuthTypeOAuth2, s)
-
-	assert.Equal(t, targetUrl, "http://www.test.com/")
 
 }

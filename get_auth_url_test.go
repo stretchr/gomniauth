@@ -24,10 +24,11 @@ func TestManager_GetAuthURL(t *testing.T) {
 
 	provider.On("AuthType").Return(common.AuthTypeOAuth2)
 
-	url, err := GetAuthURL(provider, state)
+	key := "security-key"
+	url, err := GetAuthURL(provider, state, key)
 
 	if assert.NoError(t, err) {
-		assert.Equal(t, "?access_type=online&approval_prompt=force&client_id=CLIENTID&redirect_uri=http%3A%2F%2Fwww.test.com%2F&response_type=code&scope=&state=eyJpZCI6ImFiYzEyMyIsInRhcmdldFVybCI6Imh0dHA6Ly93d3cuZ29vZ2xlLmNvbS8ifQ%3D%3D", url)
+		assert.Equal(t, "?access_type=online&approval_prompt=force&client_id=CLIENTID&redirect_uri=http%3A%2F%2Fwww.test.com%2F&response_type=code&scope=&state=eyJpZCI6ImFiYzEyMyIsInRhcmdldFVybCI6Imh0dHA6Ly93d3cuZ29vZ2xlLmNvbS8ifQ%3D%3D_72b967bc068ee9e48f0d1d0779924de446377be1", url)
 	}
 
 	mock.AssertExpectationsForObjects(t, provider.Mock, prov.Mock)

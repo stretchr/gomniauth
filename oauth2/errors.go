@@ -6,5 +6,5 @@ type OAuth2Error struct {
 }
 
 func (oe OAuth2Error) Error() string {
-	return "omniauth: oauth2: " + oe.prefix + ": " + oe.msg
+	return "gomniauth: oauth2: " + oe.prefix + ": " + oe.msg
 }

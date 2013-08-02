@@ -9,7 +9,7 @@ import (
 
 // GetAuthURL uses the specified provider and state objects to build the
 // URL which the user must be redirected to in order to get authenticated.
-func GetAuthURL(provider common.Provider, state objects.Map) (string, error) {
+func GetAuthURL(provider common.Provider, state objects.Map, stateSecurityKey string) (string, error) {
 
 	switch provider.AuthType() {
 	case common.AuthTypeOAuth2:
@@ -19,7 +19,7 @@ func GetAuthURL(provider common.Provider, state objects.Map) (string, error) {
 			Map: provider.Config().Copy(),
 		}
 
-		encodedState, encodedStateErr := state.Base64()
+		encodedState, encodedStateErr := state.SignedBase64(stateSecurityKey)
 
 		if encodedStateErr != nil {
 			return "", encodedStateErr

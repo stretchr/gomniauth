@@ -12,9 +12,10 @@ import (
 // Your application should use one session per request, and build the
 // session by calling the WithID method on the Manager.
 type Session struct {
-	manager  *Manager
-	id       string
-	provider common.Provider
+	manager            *Manager
+	id                 string
+	provider           common.Provider
+	GetOauth2Transport func(*oauth2.Config) (*oauth2.Transport, error)
 }
 
 // NewSession creates a new session with the given Manager and id.
@@ -22,7 +23,11 @@ type Session struct {
 // Users would normally not use this function, and instead, call
 // WithID on the Manager object.
 func NewSession(manager *Manager, id string, provider common.Provider) *Session {
-	return &Session{manager, id, provider}
+	s := &Session{manager, id, provider, func(config *oauth2.Config) (*oauth2.Transport, error) {
+		return &oauth2.Transport{Config: config}, nil
+	}}
+
+	return s
 }
 
 // Manager gets the Manager assocaited with this session.
@@ -116,6 +121,10 @@ func (s *Session) HandleCallback(request *http.Request) error {
 		// get the code from the request
 		code := request.FormValue("code")
 
+		if len(code) == 0 {
+			return errors.New("gomniauth: HandleCallback: No code was found.")
+		}
+
 		// make the config
 		var config = &oauth2.Config{
 			Map: s.provider.Config().Copy(),
@@ -123,11 +132,21 @@ func (s *Session) HandleCallback(request *http.Request) error {
 
 		transport := &oauth2.Transport{Config: config}
 
-		// Set the token on transport IF we have one in the AuthStore
-		auth, authStoreErr := s.Manager().AuthStore().GetAuth(s.id)
+		// get the auth store
+		authStore := s.Manager().AuthStore()
 
-		if authStoreErr != nil {
-			return authStoreErr
+		var auth *common.Auth = nil
+		if authStore != nil {
+
+			var authStoreErr error
+
+			// Set the token on transport IF we have one in the AuthStore
+			auth, authStoreErr = s.Manager().AuthStore().GetAuth(s.id)
+
+			if authStoreErr != nil {
+				return authStoreErr
+			}
+
 		}
 
 		// set the token
@@ -142,12 +161,18 @@ func (s *Session) HandleCallback(request *http.Request) error {
 			return exchangeErr
 		}
 
-		// Get the token from the transport.Exchange and pass it to
-		// the auth store.
-		s.Manager().AuthStore().PutAuth(s.id, auth2Token.Auth())
+		if authStore != nil {
 
+			// Get the token from the transport.Exchange and pass it to
+			// the auth store.
+			s.Manager().AuthStore().PutAuth(s.id, auth2Token.Auth())
+
+		}
+
+	default:
+		return errors.New("gomniauth: HandleCallback: Unsupported common.AuthType: " + s.provider.AuthType().String())
 	}
 
-	return errors.New("gomniauth: HandleCallback: Unsupported common.AuthType: " + s.provider.AuthType().String())
+	return nil
 
 }

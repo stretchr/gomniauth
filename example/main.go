@@ -9,7 +9,6 @@ import (
 	"github.com/stretchr/gomniauth/providers"
 	"github.com/stretchr/goweb"
 	"github.com/stretchr/goweb/context"
-	"github.com/stretchr/stew/objects"
 	"io/ioutil"
 	"log"
 	"net"
@@ -40,9 +39,17 @@ import (
 
 */
 
+// Address is the local (or otherwise) address to
+// bind the server to.
 var Address string = ":80"
 
+// stateSecurityKey is a key that is used when hashing the
+// state to make sure it is tamper proof (note, it is NOT
+// encrypted - just security hashed)
+const stateSecurityKey = "REPLACE-THIS-TO-MAKE-IT-MORE-SECURE"
+
 const (
+	// CookieNameSession is the name of the session cookie
 	CookieNameSession string = "session"
 )
 
@@ -80,8 +87,9 @@ func main() {
 		providers.Google("815669121291.apps.googleusercontent.com", "QrjJ2WevjIp1CbJxU18449RS", "http://www.localhost.com/auth/google/callback", "profile"),
 		providers.Github("3d1e6ba69036e0624b61", "7e8938928d802e7582908a5eadaaaf22d64babf1", "http://www.localhost.com/auth/github/callback", "user"))
 
-	// TODO: make the callback dynamic
-
+	// GET /
+	//
+	// Homepage
 	goweb.Map("GET", "/", func(c context.Context) error {
 
 		return goweb.Respond.With(c, http.StatusOK, []byte(`
@@ -215,6 +223,9 @@ func main() {
 		return goweb.Respond.With(c, http.StatusOK, []byte(output))
 	})
 
+	// GET /logout
+	//
+	// Logout page
 	goweb.Map("GET", "/logout", func(c context.Context) error {
 
 		log.Printf("Example app: Logging out")
@@ -231,6 +242,9 @@ func main() {
 
 	})
 
+	// GET /deauth
+	//
+	// Page that deletes the
 	goweb.Map("GET", "/deauth", func(c context.Context) error {
 
 		log.Printf("Example app: Forgetting user (deleting their auth token in the AuthStore)")
@@ -278,8 +292,9 @@ func main() {
 
 		for providerName, provider := range authManager.Providers() {
 
-			// TODO: Make StateWith(id, target) or similar
-			authUrl, _ := gomniauth.GetAuthURL(provider, objects.NewMap("id", sessionId, "targetUrl", targetUrl))
+			state := gomniauth.StateWithID(sessionId)
+			state["targetUrl"] = targetUrl
+			authUrl, _ := gomniauth.GetAuthURL(provider, state, stateSecurityKey)
 
 			c.HttpResponseWriter().Write([]byte(`
 						<li style='padding:5px;list-item:none'>
@@ -301,6 +316,8 @@ func main() {
 	})
 
 	// GET /auth/oauth2/{provider}/callback
+	//
+	// OAuth callback handler
 	goweb.Map("/auth/{provider}/callback", func(c context.Context) error {
 
 		provider, providerOk := authManager.Providers()[c.PathValue("provider")]
@@ -309,17 +326,14 @@ func main() {
 			return errors.New("Unsupported provider")
 		}
 
-		state, stateErr := gomniauth.StateFromRequest(provider.AuthType(), c.HttpRequest())
+		state, stateErr := gomniauth.StateFromRequest(provider.AuthType(), c.HttpRequest(), stateSecurityKey)
 
 		if stateErr != nil {
 			return stateErr
 		}
 
-		returnedSessionId, sessionErr := gomniauth.IDFromState(provider.AuthType(), state)
-
-		if sessionErr != nil {
-			return sessionErr
-		}
+		// get the key from the state
+		returnedSessionId := state[gomniauth.StateKeyID].(string)
 
 		// get the authSession
 		authSession := authManager.NewSession(returnedSessionId, provider)
@@ -337,7 +351,7 @@ func main() {
 			log.Printf("Example app: User has been logged in with session ID: %s", returnedSessionId)
 			log.Printf("  Set cookie: %s", cookie)
 
-			targetUrl := gomniauth.TargetURLFromState(provider.AuthType(), state)
+			targetUrl := state["targetUrl"].(string)
 
 			if len(targetUrl) == 0 {
 				targetUrl = "/"
@@ -359,7 +373,7 @@ func main() {
 
 	*/
 
-	log.Print("Goweb 2")
+	log.Print("Gomniauth - Example web app")
 	log.Print("by Mat Ryer and Tyler Bunnell")
 	log.Print(" ")
 	log.Print("Starting Goweb powered server...")
