@@ -18,7 +18,7 @@ func (p *GoogleProvider) Name() string {
 func (p *GoogleProvider) Config() objects.Map {
 
 	if p.config == nil {
-		p.config = objects.NewMap(
+		p.config = objects.M(
 			"authURL", "https://accounts.google.com/o/oauth2/auth",
 			"tokenURL", "https://accounts.google.com/o/oauth2/token",
 		)

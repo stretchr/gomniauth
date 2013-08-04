@@ -12,7 +12,7 @@ const securitykey = "securitykey"
 
 func TestSignedState(t *testing.T) {
 
-	state := objects.NewMap("id", "abc123", "targetUrl", "http://www.google.com/")
+	state := objects.M("id", "abc123", "targetUrl", "http://www.google.com/")
 	signed, err := state.SignedBase64(securitykey)
 
 	if assert.NoError(t, err) {

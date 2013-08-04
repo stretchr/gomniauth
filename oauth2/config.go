@@ -10,7 +10,7 @@ import (
 // Make a new config like this:
 //
 //    var config = &Config{
-//    	Map: objects.NewMap(
+//    	Map: objects.M(
 //    		"clientId", "id",
 //    		"clientSecret", "secret",
 //    		"scope", "https://test.com/auth/buzz",

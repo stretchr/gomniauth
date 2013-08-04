@@ -14,7 +14,7 @@ var (
 )
 
 func StateWithID(id string) objects.Map {
-	return objects.NewMap(StateKeyID, id)
+	return objects.M(StateKeyID, id)
 }
 
 func StateFromRequest(authType common.AuthType, r *http.Request, stateSecurityKey string) (objects.Map, error) {

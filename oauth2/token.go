@@ -30,7 +30,7 @@ func NewTokenFromAuth(auth *common.Auth) *Token {
 
 // Auth creates a common.Auth object from this token.
 func (t *Token) Auth() *common.Auth {
-	return &common.Auth{objects.NewMap("accessToken", t.AccessToken,
+	return &common.Auth{objects.M("accessToken", t.AccessToken,
 		"refreshToken", t.RefreshToken,
 		"expiry", t.Expiry)}
 }

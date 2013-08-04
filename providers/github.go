@@ -18,7 +18,7 @@ func (p *GithubProvider) Name() string {
 func (p *GithubProvider) Config() objects.Map {
 
 	if p.config == nil {
-		p.config = objects.NewMap(
+		p.config = objects.M(
 			"authURL", "https://github.com/login/oauth/authorize",
 			"tokenURL", "https://github.com/login/oauth/access_token",
 		)

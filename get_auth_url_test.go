@@ -14,10 +14,10 @@ func TestManager_GetAuthURL(t *testing.T) {
 	targetUrl := "http://www.google.com/"
 	prov := new(common.TestProvider)
 
-	state := objects.NewMap("id", id, "targetUrl", targetUrl)
+	state := objects.M("id", id, "targetUrl", targetUrl)
 
 	provider := new(common.TestProvider)
-	provider.On("Config").Return(objects.NewMap("clientId", "CLIENTID",
+	provider.On("Config").Return(objects.M("clientId", "CLIENTID",
 		"redirectURL", "http://www.test.com/",
 		"accessType", "online",
 		"approvalPrompt", "force"))

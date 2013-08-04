@@ -10,7 +10,7 @@ import (
 
 func TestTokenFromAuth(t *testing.T) {
 
-	auth := &common.Auth{objects.NewMap()}
+	auth := &common.Auth{objects.M()}
 	auth.Set("accessToken", "at")
 	auth.Set("refreshToken", "rt")
 	auth.Set("expiry", time.Now())

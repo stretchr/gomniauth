@@ -83,7 +83,7 @@ func TestOAuth(t *testing.T) {
 	defer server.Close()
 
 	config := &Config{
-		Map: objects.NewMap("clientId", "cl13nt1d",
+		Map: objects.M("clientId", "cl13nt1d",
 			"clientSecret", "s3cr3t",
 			"scope", "https://example.net/scope",
 			"authURL", server.URL+"/auth",
