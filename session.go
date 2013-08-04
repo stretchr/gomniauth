@@ -115,6 +115,11 @@ func (s *Session) AuthenticatedClient() (*http.Client, error) {
 // the process of authenticating the user.
 func (s *Session) HandleCallback(request *http.Request) error {
 
+	// Nil Session is OK here - we'll just not do anything
+	if s == nil {
+		return nil //... but it's not an error
+	}
+
 	switch s.provider.AuthType() {
 	case common.AuthTypeOAuth2:
 

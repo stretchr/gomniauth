@@ -20,3 +20,11 @@ func TestNewSession(t *testing.T) {
 	}
 
 }
+
+func TestNilSessionIsOK(t *testing.T) {
+
+	var s *Session = nil
+
+	assert.NoError(t, s.HandleCallback(nil))
+
+}
