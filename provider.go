@@ -11,9 +11,6 @@ type Provider interface {
 	// Name is the unique name for this provider.
 	Name() string
 
-	// With gets a provider with the specified Config.
-	With(common.Config) Provider
-
 	// AuthHandler gets the AuthHandler that handles this provider.
 	AuthHandler() AuthHandler
 
