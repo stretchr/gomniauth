@@ -9,3 +9,5 @@ import (
 type Credentials struct {
 	objects.Map
 }
+
+var EmptyCredentials *Credentials = nil

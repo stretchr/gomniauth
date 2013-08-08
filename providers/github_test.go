@@ -21,11 +21,23 @@ func TestNewGithub(t *testing.T) {
 
 	g := Github("clientID", "secret", "http://myapp.com/")
 
-	if assert.NotNil(t, g) && assert.NotNil(t, g.config) {
-		assert.Equal(t, "clientID", g.config.Get(OAuth2KeyClientID))
-		assert.Equal(t, "secret", g.config.Get(OAuth2KeySecret))
-		assert.Equal(t, "http://myapp.com/", g.config.Get(OAuth2KeyRedirectUrl))
-		assert.Equal(t, githubDefaultScope, g.config.Get(OAuth2KeyScope))
+	if assert.NotNil(t, g) {
+
+		// check config
+		if assert.NotNil(t, g.config) {
+
+			assert.Equal(t, "clientID", g.config.Get(OAuth2KeyClientID))
+			assert.Equal(t, "secret", g.config.Get(OAuth2KeySecret))
+			assert.Equal(t, "http://myapp.com/", g.config.Get(OAuth2KeyRedirectUrl))
+			assert.Equal(t, githubDefaultScope, g.config.Get(OAuth2KeyScope))
+
+			assert.Equal(t, githubAuthURL, g.config.Get(OAuth2KeyAuthURL))
+			assert.Equal(t, githubTokenURL, g.config.Get(OAuth2KeyTokenURL))
+
+		}
+
+		// check factory
+
 	}
 
 }
@@ -35,7 +47,7 @@ func TestGithubName(t *testing.T) {
 	assert.Equal(t, githubName, g.Name())
 }
 
-func TestGetBeginAuthURL(t *testing.T) {
+func TestGitHubGetBeginAuthURL(t *testing.T) {
 
 	gomniauth.SecurityKey = "ABC123"
 
