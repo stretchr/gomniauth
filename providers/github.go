@@ -1,46 +1,59 @@
 package providers
 
 import (
-	"github.com/stretchr/gomniauth"
 	"github.com/stretchr/gomniauth/common"
-	"github.com/stretchr/gomniauth/handlers"
 	"github.com/stretchr/stew/objects"
-	"net/url"
+	"net/http"
 )
 
-type Github struct {
-	config      common.Config
-	authHandler *handlers.OAuth2Handler
+const (
+	githubDefaultScope string = "user"
+	githubName         string = "github"
+)
+
+type GithubProvider struct {
+	OAuth2Provider
 }
 
-func (g *Github) AuthHandler() gomniauth.AuthHandler {
-	return g.authHandler
+func Github(clientId, clientSecret, redirectUrl string) *GithubProvider {
+
+	p := new(GithubProvider)
+	p.config = &common.Config{objects.M(
+		OAuth2KeyClientID, clientId,
+		OAuth2KeySecret, clientSecret,
+		OAuth2KeyRedirectUrl, redirectUrl,
+		OAuth2KeyScope, githubDefaultScope,
+		OAuth2KeyAccessType, OAuth2AccessTypeOnline,
+		OAuth2KeyApprovalPrompt, OAuth2ApprovalPromptAuto)}
+	return p
 }
 
-func (g *Github) BeginAuthURL(params objects.Map) (string, error) {
+// Name is the unique name for this provider.
+func (g *GithubProvider) Name() string {
+	return githubName
+}
 
-	// get the state (signed)
-	state, stateErr := params.GetMap("state").SignedBase64(gomniauth.GetSecurityKey())
+// GetBeginAuthURL gets the URL that the client must visit in order
+// to begin the authentication process.
+func (g *GithubProvider) GetBeginAuthURL(state *common.State) (string, error) {
+	return g.GetBeginAuthURLWithBase("https://github.com/login/oauth/authorize", state, g.config)
+}
 
-	if stateErr != nil {
-		return "", stateErr
-	}
+// CompleteAuth takes a map of arguments that are used to
+// complete the authorisation process, completes it, and returns
+// the appropriate common.Credentials.
+func (g *GithubProvider) CompleteAuth(data objects.Map) (*common.Credentials, error) {
+	return nil, nil
+}
 
-	paramList := url.Values{
-		"response_type":   {"code"},
-		"client_id":       {g.config.GetString("client_id")},
-		"redirect_uri":    {g.config.GetString("redirect_url")},
-		"scope":           {g.config.GetString("scope")},
-		"state":           {state},
-		"access_type":     {g.config.GetString("access_type")},
-		"approval_prompt": {g.config.GetString("approval_prompt")},
-	}.Encode()
+// LoadUser uses the specified common.Credentials to access the users profile
+// from the remote provider, and builds the appropriate User object.
+func (g *GithubProvider) LoadUser(creds *common.Credentials) (common.User, error) {
+	return nil, nil
+}
 
-	paramStr, err := g.authHandler.GetParamsString(params)
-
-	if err != nil {
-		return "", err
-	}
-
-	return "https://github.com/login/oauth/authorize?" + paramStr, nil
+// GetClient gets an http.Client authenticated with the specified
+// common.Credentials.
+func (g *GithubProvider) GetClient(creds *common.Credentials) (*http.Client, error) {
+	return nil, nil
 }

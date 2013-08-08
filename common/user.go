@@ -1,7 +1,6 @@
-package gomniauth
+package common
 
 import (
-	"github.com/stretchr/gomniauth/common"
 	"github.com/stretchr/stew/objects"
 )
 
@@ -13,7 +12,7 @@ func (u User) Email() string {
 func (u User) FullName() string {
 	return ""
 }
-func (u User) ProviderCredentials() map[string]common.Credentials {
+func (u User) ProviderCredentials() map[string]Credentials {
 	return nil
 }
 func (u User) ID() string {

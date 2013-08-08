@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"github.com/stretchr/gomniauth/common"
-	"github.com/stretchr/stew/objects"
 	"net/http"
 )
 
@@ -24,10 +23,8 @@ func (t *OAuth2Tripper) RoundTrip(req *http.Request) (*http.Response, error) {
 
 type OAuth2Handler struct{}
 
+var DefaultOAuth2Handler = &OAuth2Handler{}
+
 func (h *OAuth2Handler) NewRoundTripper() (http.RoundTripper, error) {
 	return new(OAuth2Tripper), nil
-}
-
-func (h *OAuth2Handler) GetParamsString(params objects.Map) (string, error) {
-	return "", nil
 }

@@ -6,4 +6,6 @@ import (
 
 // Credentials represent data that describes information needed
 // to make authenticated requests.
-type Credentials objects.Map
+type Credentials struct {
+	objects.Map
+}
