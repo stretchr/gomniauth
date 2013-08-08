@@ -17,7 +17,7 @@ func TestProviderNewTripper(t *testing.T) {
 	provider.tripperFactory = testTripperFactory
 
 	testTripper := new(test.TestTripper)
-	testTripperFactory.On("NewTripper", creds).Return(testTripper, nil)
+	testTripperFactory.On("NewTripper", creds, provider).Return(testTripper, nil)
 
 	returnedTripper, err := provider.NewTripper(creds)
 
@@ -50,7 +50,7 @@ func TestProviderGetClient(t *testing.T) {
 	g.SetTripperFactory(testTripperFactory)
 	creds := new(common.Credentials)
 
-	testTripperFactory.On("NewTripper", creds).Return(testTripper, nil)
+	testTripperFactory.On("NewTripper", creds, g).Return(testTripper, nil)
 
 	client, clientErr := g.GetClient(creds)
 

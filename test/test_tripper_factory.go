@@ -10,7 +10,7 @@ type TestTripperFactory struct {
 	mock.Mock
 }
 
-func (t *TestTripperFactory) NewTripper(creds *common.Credentials) (gomniauth.Tripper, error) {
-	args := t.Called(creds)
+func (t *TestTripperFactory) NewTripper(creds *common.Credentials, provider gomniauth.Provider) (gomniauth.Tripper, error) {
+	args := t.Called(creds, provider)
 	return args.Get(0).(gomniauth.Tripper), args.Error(1)
 }

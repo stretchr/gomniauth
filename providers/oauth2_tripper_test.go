@@ -11,8 +11,9 @@ import (
 
 func TestNewOAuth2Tripper(t *testing.T) {
 
+	g := new(OAuth2Provider)
 	creds := &common.Credentials{objects.M()}
-	var tripper gomniauth.Tripper = NewOAuth2Tripper(creds)
+	var tripper gomniauth.Tripper = NewOAuth2Tripper(creds, g)
 
 	if assert.NotNil(t, tripper) {
 		assert.Equal(t, creds, tripper.Credentials())

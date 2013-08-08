@@ -7,6 +7,6 @@ import (
 
 type OAuth2TripperFactory struct{}
 
-func (f *OAuth2TripperFactory) NewTripper(creds *common.Credentials) (gomniauth.Tripper, error) {
-	return NewOAuth2Tripper(creds), nil
+func (f *OAuth2TripperFactory) NewTripper(creds *common.Credentials, provider gomniauth.Provider) (gomniauth.Tripper, error) {
+	return NewOAuth2Tripper(creds, provider.(*OAuth2Provider)), nil
 }

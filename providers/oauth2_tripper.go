@@ -8,10 +8,11 @@ import (
 type OAuth2Tripper struct {
 	underlyingTransport http.RoundTripper
 	credentials         *common.Credentials
+	provider            *OAuth2Provider
 }
 
-func NewOAuth2Tripper(creds *common.Credentials) *OAuth2Tripper {
-	return &OAuth2Tripper{http.DefaultTransport, creds}
+func NewOAuth2Tripper(creds *common.Credentials, provider *OAuth2Provider) *OAuth2Tripper {
+	return &OAuth2Tripper{http.DefaultTransport, creds, provider}
 }
 
 func (t *OAuth2Tripper) RoundTrip(req *http.Request) (*http.Response, error) {

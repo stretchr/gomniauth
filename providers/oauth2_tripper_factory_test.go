@@ -9,14 +9,16 @@ import (
 
 func TestOAuth2TripperFactoryNewTripper(t *testing.T) {
 
+	g := new(OAuth2Provider)
+
+	creds := new(common.Credentials)
 	var tripperFactory gomniauth.TripperFactory
 	tripperFactory = new(OAuth2TripperFactory)
 
 	assert.NotNil(t, tripperFactory)
 
-	creds := new(common.Credentials)
 	var tripper gomniauth.Tripper
-	tripper, err := tripperFactory.NewTripper(creds)
+	tripper, err := tripperFactory.NewTripper(creds, g)
 
 	if assert.NotNil(t, tripper) && assert.NoError(t, err) {
 
