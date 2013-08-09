@@ -1,12 +1,10 @@
 package providers
 
 import (
-	"github.com/stretchr/codecs/services"
 	"github.com/stretchr/gomniauth"
 	"github.com/stretchr/gomniauth/common"
 	"github.com/stretchr/gomniauth/oauth2"
 	"github.com/stretchr/stew/objects"
-	"io/ioutil"
 	"net/http"
 )
 
@@ -64,46 +62,24 @@ func (g *GithubProvider) GetBeginAuthURL(state *common.State) (string, error) {
 	return oauth2.GetBeginAuthURLWithBase(g.config.GetString(oauth2.OAuth2KeyAuthURL), state, g.config)
 }
 
+// Load makes an authenticated request and returns the data in the
+// response as a data map.
+func (g *GithubProvider) Load(creds *common.Credentials, endpoint string) (objects.Map, error) {
+	return oauth2.Load(g, creds, endpoint)
+}
+
 // LoadUser uses the specified common.Credentials to access the users profile
 // from the remote provider, and builds the appropriate User object.
 func (g *GithubProvider) LoadUser(creds *common.Credentials) (common.User, error) {
 
-	client, clientErr := g.GetClient(creds)
+	profileData, err := g.Load(creds, githubEndpointProfile)
 
-	if clientErr != nil {
-		return nil, clientErr
-	}
-
-	response, responseErr := client.Get(githubEndpointProfile)
-
-	if responseErr != nil {
-		return nil, responseErr
-	}
-
-	body, bodyErr := ioutil.ReadAll(response.Body)
-
-	if bodyErr != nil {
-		return nil, bodyErr
-	}
-
-	defer response.Body.Close()
-
-	codecs := services.NewWebCodecService()
-	codec, getCodecErr := codecs.GetCodec(response.Header.Get("Content-Type"))
-
-	if getCodecErr != nil {
-		return nil, getCodecErr
-	}
-
-	var data objects.Map
-	unmarshalErr := codec.Unmarshal(body, &data)
-
-	if unmarshalErr != nil {
-		return nil, unmarshalErr
+	if err != nil {
+		return nil, err
 	}
 
 	// build user
-	user := &gomniauth.User{data.TransformKeys(githubToGomniauthKeys)}
+	user := &gomniauth.User{profileData.TransformKeys(githubToGomniauthKeys)}
 
 	return user, nil
 }

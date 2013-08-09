@@ -24,6 +24,10 @@ type Provider interface {
 	// from the remote provider, and builds the appropriate User object.
 	LoadUser(creds *Credentials) (User, error)
 
+	// Load makes an authenticated request and returns the data in the
+	// response as a data map.
+	Load(creds *Credentials, endpoint string) (objects.Map, error)
+
 	// GetClient gets an http.Client authenticated with the specified
 	// Credentials.
 	GetClient(creds *Credentials) (*http.Client, error)
