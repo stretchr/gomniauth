@@ -51,7 +51,7 @@ const (
 )
 
 type OAuth2Provider struct {
-	BaseProvider
+	Provider
 }
 
 func (p *OAuth2Provider) GetBeginAuthURLWithBase(base string, state *common.State, config *common.Config) (string, error) {
@@ -99,7 +99,7 @@ func (g *OAuth2Provider) CompleteAuth(data objects.Map) (*common.Credentials, er
 	// get the code
 	code := data.GetStringOrEmpty("code")
 	if len(code) == 0 {
-		return nil, &MissingParameterError{"code"}
+		return nil, &common.MissingParameterError{"code"}
 	}
 
 	client, clientErr := g.GetClient(common.EmptyCredentials)
@@ -152,7 +152,7 @@ func (g *OAuth2Provider) CompleteAuth(data objects.Map) (*common.Credentials, er
 
 		// did an error occur?
 		if len(vals.GetStringOrEmpty("error")) > 0 {
-			return nil, &AuthServerError{vals.GetStringOrEmpty("error")}
+			return nil, &common.AuthServerError{vals.GetStringOrEmpty("error")}
 		}
 
 		expiresIn, expiresErr := time.ParseDuration(vals.GetStringOrEmpty(OAuth2KeyExpiresIn) + "s")

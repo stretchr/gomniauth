@@ -49,6 +49,7 @@ func main() {
 	   ----------------------------------------------------------------
 	*/
 
+	log.Println("Starting...")
 	fmt.Print("Gomniauth - Example web app\n")
 	fmt.Print("by Mat Ryer and Tyler Bunnell\n")
 	fmt.Print(" \n")
@@ -84,23 +85,23 @@ func main() {
 			// sig is a ^C, handle it
 
 			// stop the HTTP server
-			fmt.Print("Stopping the server...")
+			fmt.Print("Stopping the server...\n")
 			listener.Close()
 
 			/*
 			   Tidy up and tear down
 			*/
-			fmt.Print("Tearing down...")
+			fmt.Print("Tearing down...\n")
 
 			// TODO: tidy code up here
 
-			log.Fatal("Finished - bye bye.  ;-)")
+			log.Fatal("Finished - bye bye.  ;-)\n")
 
 		}
 	}()
 
 	// begin the server
-	log.Fatalf("Error in Serve: %s", s.Serve(listener))
+	log.Fatalf("Error in Serve: %s\n", s.Serve(listener))
 
 	/*
 	   ----------------------------------------------------------------
