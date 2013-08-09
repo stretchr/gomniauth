@@ -1,6 +1,7 @@
 package common
 
 import (
+	"github.com/stretchr/codecs"
 	"github.com/stretchr/stew/objects"
 )
 
@@ -10,6 +11,8 @@ const (
 )
 
 type User interface {
+	codecs.Facade
+
 	// Email gets the users email address.
 	Email() string
 

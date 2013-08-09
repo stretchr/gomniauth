@@ -66,3 +66,7 @@ func (u *User) ID() string {
 func (u *User) Data() objects.Map {
 	return u.data
 }
+
+func (u *User) PublicData(options map[string]interface{}) (publicData interface{}, err error) {
+	return u.data, nil
+}
