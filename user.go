@@ -5,15 +5,6 @@ import (
 	"github.com/stretchr/stew/objects"
 )
 
-const (
-	UserKeyEmail               string = "UserKeyEmail"
-	UserKeyName                string = "UserKeyName"
-	UserKeyNickname            string = "UserKeyNickname"
-	UserKeyAvatar              string = "UserKeyAvatar"
-	UserKeyID                  string = "UserKeyID"
-	UserKeyProviderCredentials string = "UserKeyProviderCredentials"
-)
-
 // User defines a type that will be populated with as much
 // data as possible from a provider once authentication is completed.
 //
@@ -22,24 +13,29 @@ type User struct {
 	objects.Map
 }
 
+// Get gets a value by key.
+func (u User) GetValue(key string) interface{} {
+	return u.Get(key)
+}
+
 // Email gets the users email address.
 func (u User) Email() string {
-	return ""
+	return u.GetStringOrEmpty(common.UserKeyEmail)
 }
 
 // Name gets the users full name.
 func (u User) Name() string {
-	return ""
+	return u.GetStringOrEmpty(common.UserKeyName)
 }
 
 // Nickname gets the users nickname or username.
 func (u User) Nickname() string {
-	return ""
+	return u.GetStringOrEmpty(common.UserKeyNickname)
 }
 
 // AvatarURL gets the URL of an image representing the user.
 func (u User) AvatarURL() string {
-	return ""
+	return u.GetStringOrEmpty(common.UserKeyAvatar)
 }
 
 // ProviderCredentials gets a map of Credentials (by provider name).
@@ -49,11 +45,11 @@ func (u User) ProviderCredentials() map[string]*common.Credentials {
 
 func (u User) AddProviderCredentials(provider common.Provider, creds *common.Credentials) error {
 
-	providerCreds := u.Get(UserKeyProviderCredentials)
+	providerCreds := u.Get(common.UserKeyProviderCredentials)
 
 	if providerCreds == nil {
 		providerCreds = objects.M()
-		u.Set(UserKeyProviderCredentials, providerCreds)
+		u.Set(common.UserKeyProviderCredentials, providerCreds)
 	}
 
 	providerCreds.(objects.Map).Set(provider.Name(), creds)
@@ -63,7 +59,7 @@ func (u User) AddProviderCredentials(provider common.Provider, creds *common.Cre
 
 // ID gets this user's globally unique ID.
 func (u User) ID() string {
-	return ""
+	return u.GetStringOrEmpty(common.UserKeyID)
 }
 
 /*

@@ -23,8 +23,8 @@ func TestAddProviderCredentials(t *testing.T) {
 
 	user.AddProviderCredentials(provider, creds)
 
-	if assert.NotNil(t, user.Get(UserKeyProviderCredentials)) {
-		assert.Equal(t, creds, user.GetMap(UserKeyProviderCredentials).Get("provider-name"))
+	if assert.NotNil(t, user.Get(common.UserKeyProviderCredentials)) {
+		assert.Equal(t, creds, user.GetMap(common.UserKeyProviderCredentials).Get("provider-name"))
 	}
 
 	mock.AssertExpectationsForObjects(t, provider.Mock)

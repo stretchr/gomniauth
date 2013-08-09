@@ -2,6 +2,7 @@ package providers
 
 import (
 	"github.com/stretchr/codecs/services"
+	"github.com/stretchr/gomniauth"
 	"github.com/stretchr/gomniauth/common"
 	"github.com/stretchr/gomniauth/oauth2"
 	"github.com/stretchr/stew/objects"
@@ -16,6 +17,12 @@ const (
 	githubTokenURL        string = "https://github.com/login/oauth/access_token"
 	githubEndpointProfile string = "https://api.github.com/user"
 )
+
+var githubToGomniauthKeys = map[string]string{
+	"login":      common.UserKeyNickname,
+	"name":       common.UserKeyName,
+	"email":      common.UserKeyEmail,
+	"avatar_url": common.UserKeyAvatar}
 
 type GithubProvider struct {
 	config         *common.Config
@@ -96,9 +103,9 @@ func (g *GithubProvider) LoadUser(creds *common.Credentials) (common.User, error
 	}
 
 	// build user
-	//user := gomniauth.User(data)
+	user := &gomniauth.User{data.TransformKeys(githubToGomniauthKeys)}
 
-	return nil, nil
+	return user, nil
 }
 
 // CompleteAuth takes a map of arguments that are used to

@@ -25,6 +25,7 @@ func TestGitHubImplementrsProvider(t *testing.T) {
 func TestLoadUser(t *testing.T) {
 
 	g := Github("clientID", "secret", "http://myapp.com/")
+	creds := new(common.Credentials)
 
 	testTripperFactory := new(test.TestTripperFactory)
 	testTripper := new(test.TestTripper)
@@ -33,10 +34,23 @@ func TestLoadUser(t *testing.T) {
 	testResponse.Header = make(http.Header)
 	testResponse.Header.Set("Content-Type", "application/json")
 	testResponse.StatusCode = 200
-	testResponse.Body = ioutil.NopCloser(strings.NewReader(`{"id":"uniqueid","login":"loginname","email":"email@address.com","avatar_url":"http://myface.com/","blog":"http://blog.com/"}`))
+	testResponse.Body = ioutil.NopCloser(strings.NewReader(`{"name":"their-name","id":"uniqueid","login":"loginname","email":"email@address.com","avatar_url":"http://myface.com/","blog":"http://blog.com/"}`))
 	testTripper.On("RoundTrip", mock.Anything).Return(testResponse, nil)
 
 	g.tripperFactory = testTripperFactory
+
+	user, err := g.LoadUser(creds)
+
+	if assert.NoError(t, err) && assert.NotNil(t, user) {
+
+		assert.Equal(t, user.Name(), "their-name")
+		assert.Equal(t, user.ID(), "") // doesn't come from github
+		assert.Equal(t, user.Nickname(), "loginname")
+		assert.Equal(t, user.Email(), "email@address.com")
+		assert.Equal(t, user.AvatarURL(), "http://myface.com/")
+		assert.Equal(t, user.GetValue("blog"), "http://blog.com/")
+
+	}
 
 }
 

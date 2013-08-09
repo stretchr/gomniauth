@@ -1,5 +1,14 @@
 package common
 
+const (
+	UserKeyEmail               string = "UserKeyEmail"
+	UserKeyName                string = "UserKeyName"
+	UserKeyNickname            string = "UserKeyNickname"
+	UserKeyAvatar              string = "UserKeyAvatar"
+	UserKeyID                  string = "UserKeyID"
+	UserKeyProviderCredentials string = "UserKeyProviderCredentials"
+)
+
 type User interface {
 	// Email gets the users email address.
 	Email() string
@@ -18,6 +27,9 @@ type User interface {
 
 	// ID gets this user's globally unique ID.
 	ID() string
+
+	// GetValue gets any User field by name.
+	GetValue(key string) interface{}
 
 	// AddProviderCredentials adds the provider credentials to the
 	// ProviderCredentials for this User.
