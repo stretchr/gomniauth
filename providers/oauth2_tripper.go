@@ -1,6 +1,7 @@
 package providers
 
 import (
+	"github.com/stretchr/gomniauth"
 	"github.com/stretchr/gomniauth/common"
 	"net/http"
 )
@@ -11,8 +12,8 @@ type OAuth2Tripper struct {
 	provider            *OAuth2Provider
 }
 
-func NewOAuth2Tripper(creds *common.Credentials, provider *OAuth2Provider) *OAuth2Tripper {
-	return &OAuth2Tripper{http.DefaultTransport, creds, provider}
+func NewOAuth2Tripper(creds *common.Credentials, provider gomniauth.Provider) *OAuth2Tripper {
+	return &OAuth2Tripper{http.DefaultTransport, creds, provider.(*OAuth2Provider)}
 }
 
 func (t *OAuth2Tripper) RoundTrip(req *http.Request) (*http.Response, error) {

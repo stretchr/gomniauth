@@ -70,7 +70,7 @@ func TestOAuth2Provider_CompleteAuth_URLEncodedResponse(t *testing.T) {
 	testResponse.StatusCode = 200
 	testResponse.Body = ioutil.NopCloser(strings.NewReader("expires_in=20&access_token=ACCESSTOKEN&refresh_token=REFRESHTOKEN"))
 
-	testTripperFactory.On("NewTripper", common.EmptyCredentials, g).Return(testTripper, nil)
+	testTripperFactory.On("NewTripper", common.EmptyCredentials, mock.Anything).Return(testTripper, nil)
 	testTripper.On("RoundTrip", mock.Anything).Return(testResponse, nil)
 
 	data := objects.M(OAuth2KeyCode, "123")
@@ -115,7 +115,7 @@ func TestOAuth2Provider_CompleteAuth_JSON(t *testing.T) {
 	testResponse.StatusCode = 200
 	testResponse.Body = ioutil.NopCloser(strings.NewReader(`{"expires_in":20,"access_token":"ACCESSTOKEN","refresh_token":"REFRESHTOKEN"}`))
 
-	testTripperFactory.On("NewTripper", common.EmptyCredentials, g).Return(testTripper, nil)
+	testTripperFactory.On("NewTripper", common.EmptyCredentials, mock.Anything).Return(testTripper, nil)
 	testTripper.On("RoundTrip", mock.Anything).Return(testResponse, nil)
 
 	data := objects.M(OAuth2KeyCode, "123")
