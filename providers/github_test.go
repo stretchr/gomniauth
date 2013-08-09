@@ -10,7 +10,7 @@ import (
 
 func TestGitHubImplementrsProvider(t *testing.T) {
 
-	var provider gomniauth.Provider
+	var provider common.Provider
 	provider = new(GithubProvider)
 
 	assert.NotNil(t, provider)
@@ -24,15 +24,15 @@ func TestNewGithub(t *testing.T) {
 	if assert.NotNil(t, g) {
 
 		// check config
-		if assert.NotNil(t, g.config) {
+		if assert.NotNil(t, g.Config) {
 
-			assert.Equal(t, "clientID", g.config.Get(OAuth2KeyClientID))
-			assert.Equal(t, "secret", g.config.Get(OAuth2KeySecret))
-			assert.Equal(t, "http://myapp.com/", g.config.Get(OAuth2KeyRedirectUrl))
-			assert.Equal(t, githubDefaultScope, g.config.Get(OAuth2KeyScope))
+			assert.Equal(t, "clientID", g.Config.Get(gomniauth.OAuth2KeyClientID))
+			assert.Equal(t, "secret", g.Config.Get(gomniauth.OAuth2KeySecret))
+			assert.Equal(t, "http://myapp.com/", g.Config.Get(gomniauth.OAuth2KeyRedirectUrl))
+			assert.Equal(t, githubDefaultScope, g.Config.Get(gomniauth.OAuth2KeyScope))
 
-			assert.Equal(t, githubAuthURL, g.config.Get(OAuth2KeyAuthURL))
-			assert.Equal(t, githubTokenURL, g.config.Get(OAuth2KeyTokenURL))
+			assert.Equal(t, githubAuthURL, g.Config.Get(gomniauth.OAuth2KeyAuthURL))
+			assert.Equal(t, githubTokenURL, g.Config.Get(gomniauth.OAuth2KeyTokenURL))
 
 		}
 
@@ -61,8 +61,8 @@ func TestGitHubGetBeginAuthURL(t *testing.T) {
 		assert.Contains(t, url, "client_id=clientID")
 		assert.Contains(t, url, "redirect_url=http%3A%2F%2Fmyapp.com%2F")
 		assert.Contains(t, url, "scope="+githubDefaultScope)
-		assert.Contains(t, url, "access_type="+OAuth2AccessTypeOnline)
-		assert.Contains(t, url, "approval_prompt="+OAuth2ApprovalPromptAuto)
+		assert.Contains(t, url, "access_type="+gomniauth.OAuth2AccessTypeOnline)
+		assert.Contains(t, url, "approval_prompt="+gomniauth.OAuth2ApprovalPromptAuto)
 	}
 
 }

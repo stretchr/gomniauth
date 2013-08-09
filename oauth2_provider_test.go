@@ -1,7 +1,6 @@
-package providers
+package gomniauth
 
 import (
-	"github.com/stretchr/gomniauth"
 	"github.com/stretchr/gomniauth/common"
 	"github.com/stretchr/gomniauth/test"
 	"github.com/stretchr/stew/objects"
@@ -16,7 +15,7 @@ import (
 
 func TestOAuth2HandlerBeginAuthURLWithBase(t *testing.T) {
 
-	gomniauth.SecurityKey = "ABC123"
+	SecurityKey = "ABC123"
 
 	h := &OAuth2Provider{}
 	base := "https://base.url/auth"
@@ -49,7 +48,7 @@ func TestOAuth2Provider_CompleteAuth_URLEncodedResponse(t *testing.T) {
 
 	g := &OAuth2Provider{} // ("clientID", "secret", "http://myapp.com/")
 
-	g.config = &common.Config{
+	g.Config = &common.Config{
 		objects.M(
 			OAuth2KeyRedirectUrl, OAuth2KeyRedirectUrl,
 			OAuth2KeyScope, OAuth2KeyScope,
@@ -94,7 +93,7 @@ func TestOAuth2Provider_CompleteAuth_JSON(t *testing.T) {
 
 	g := &OAuth2Provider{} // ("clientID", "secret", "http://myapp.com/")
 
-	g.config = &common.Config{
+	g.Config = &common.Config{
 		objects.M(
 			OAuth2KeyRedirectUrl, OAuth2KeyRedirectUrl,
 			OAuth2KeyScope, OAuth2KeyScope,

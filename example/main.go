@@ -1,0 +1,111 @@
+package main
+
+import (
+	"fmt"
+	"github.com/stretchr/goweb"
+	"github.com/stretchr/goweb/context"
+	"log"
+	"net"
+	"net/http"
+	"os"
+	"os/signal"
+	"time"
+)
+
+const (
+	Address string = ":8080"
+)
+
+func write(ctx context.Context, output string) {
+	ctx.HttpResponseWriter().Write([]byte(output))
+}
+
+func writeHeader(ctx context.Context) {
+	write(ctx, "Gomniauth - Example web app")
+}
+
+func respondWithError(ctx context.Context, errorMessage string) error {
+	writeHeader(ctx)
+	write(ctx, fmt.Sprintf("Error: %s", errorMessage))
+	return nil
+}
+
+func main() {
+
+	/*
+	   GET /auth/{provider}/login
+
+	   Redirects them to the fmtin page for the specified provider.
+	*/
+	goweb.Map("auth/{provider}/login", func(ctx context.Context) error {
+
+		return nil
+
+	})
+
+	/*
+	   ----------------------------------------------------------------
+	   START OF WEB SERVER CODE
+	   ----------------------------------------------------------------
+	*/
+
+	fmt.Print("Gomniauth - Example web app\n")
+	fmt.Print("by Mat Ryer and Tyler Bunnell\n")
+	fmt.Print(" \n")
+	fmt.Print("Starting Goweb powered server...\n")
+
+	// make a http server using the goweb.DefaultHttpHandler()
+	s := &http.Server{
+		Addr:           Address,
+		Handler:        goweb.DefaultHttpHandler(),
+		ReadTimeout:    10 * time.Second,
+		WriteTimeout:   10 * time.Second,
+		MaxHeaderBytes: 1 << 20,
+	}
+
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	listener, listenErr := net.Listen("tcp", Address)
+
+	fmt.Printf("  visit: %s\n", Address)
+
+	if listenErr != nil {
+		log.Fatalf("Could not listen: %s", listenErr)
+	}
+
+	fmt.Println("\n")
+	fmt.Println("Try some of these routes:\n")
+	fmt.Printf("%s", goweb.DefaultHttpHandler())
+	fmt.Println("\n\n")
+
+	go func() {
+		for _ = range c {
+
+			// sig is a ^C, handle it
+
+			// stop the HTTP server
+			fmt.Print("Stopping the server...")
+			listener.Close()
+
+			/*
+			   Tidy up and tear down
+			*/
+			fmt.Print("Tearing down...")
+
+			// TODO: tidy code up here
+
+			log.Fatal("Finished - bye bye.  ;-)")
+
+		}
+	}()
+
+	// begin the server
+	log.Fatalf("Error in Serve: %s", s.Serve(listener))
+
+	/*
+	   ----------------------------------------------------------------
+	   END OF WEB SERVER CODE
+	   ----------------------------------------------------------------
+	*/
+
+}

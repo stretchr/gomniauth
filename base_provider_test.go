@@ -1,4 +1,4 @@
-package providers
+package gomniauth
 
 import (
 	"github.com/stretchr/gomniauth/common"
@@ -8,13 +8,13 @@ import (
 	"testing"
 )
 
-func TestProviderNewTripper(t *testing.T) {
+func TestBaseProviderNewTripper(t *testing.T) {
 
 	creds := new(common.Credentials)
-	provider := new(Provider)
+	provider := new(BaseProvider)
 
 	testTripperFactory := new(test.TestTripperFactory)
-	provider.tripperFactory = testTripperFactory
+	provider.TripperFactory = testTripperFactory
 
 	testTripper := new(test.TestTripper)
 	testTripperFactory.On("NewTripper", creds, provider).Return(testTripper, nil)
@@ -29,20 +29,21 @@ func TestProviderNewTripper(t *testing.T) {
 
 }
 
-func TestProviderSetTripperFactory(t *testing.T) {
+func TestBaseProviderSetTripperFactory(t *testing.T) {
 
 	testTripperFactory := new(test.TestTripperFactory)
-	provider := new(Provider)
+	provider := new(BaseProvider)
 
 	provider.SetTripperFactory(testTripperFactory)
 
-	assert.Equal(t, testTripperFactory, provider.tripperFactory)
+	assert.Equal(t, testTripperFactory, provider.TripperFactory)
 
 }
 
-func TestProviderGetClient(t *testing.T) {
+func TestBaseProviderGetClient(t *testing.T) {
 
-	g := Github("clientID", "secret", "http://myapp.com/")
+	//g := Github("clientID", "secret", "http://myapp.com/")
+	g := new(BaseProvider)
 
 	testTripperFactory := new(test.TestTripperFactory)
 	testTripper := new(test.TestTripper)

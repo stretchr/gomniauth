@@ -1,4 +1,4 @@
-package providers
+package gomniauth
 
 type MissingParameterError struct {
 	ParameterName string

@@ -1,8 +1,4 @@
-package gomniauth
-
-import (
-	"github.com/stretchr/gomniauth/common"
-)
+package common
 
 type DataService interface {
 
@@ -14,7 +10,7 @@ type DataService interface {
 	//
 	// If an empty authToken is specified, a nil User object is always returned,
 	// but this is not an error.
-	GetUserByAuthToken(authToken string) (common.User, error)
+	GetUserByAuthToken(authToken string) (User, error)
 
 	// GetUserByProviderId retrieves a user object from the data store by
 	// the provided provider and providerId.
@@ -25,8 +21,8 @@ type DataService interface {
 	// If a user object is not found, a nil User will be returned.
 	// This is an entirely new user and a new User object should be created,
 	// then stored by calling PutUser.
-	GetUserByProviderId(provider, providerId string) (common.User, error)
+	GetUserByProviderId(provider, providerId string) (User, error)
 
 	// PutUser persists the specified User.
-	PutUser(user common.User) error
+	PutUser(user User) error
 }

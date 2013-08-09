@@ -1,6 +1,7 @@
 package providers
 
 import (
+	"github.com/stretchr/gomniauth"
 	"github.com/stretchr/gomniauth/common"
 	"github.com/stretchr/stew/objects"
 )
@@ -13,21 +14,21 @@ const (
 )
 
 type GithubProvider struct {
-	OAuth2Provider
+	gomniauth.OAuth2Provider
 }
 
 func Github(clientId, clientSecret, redirectUrl string) *GithubProvider {
 
 	p := new(GithubProvider)
-	p.config = &common.Config{objects.M(
-		OAuth2KeyAuthURL, githubAuthURL,
-		OAuth2KeyTokenURL, githubTokenURL,
-		OAuth2KeyClientID, clientId,
-		OAuth2KeySecret, clientSecret,
-		OAuth2KeyRedirectUrl, redirectUrl,
-		OAuth2KeyScope, githubDefaultScope,
-		OAuth2KeyAccessType, OAuth2AccessTypeOnline,
-		OAuth2KeyApprovalPrompt, OAuth2ApprovalPromptAuto)}
+	p.Config = &common.Config{objects.M(
+		gomniauth.OAuth2KeyAuthURL, githubAuthURL,
+		gomniauth.OAuth2KeyTokenURL, githubTokenURL,
+		gomniauth.OAuth2KeyClientID, clientId,
+		gomniauth.OAuth2KeySecret, clientSecret,
+		gomniauth.OAuth2KeyRedirectUrl, redirectUrl,
+		gomniauth.OAuth2KeyScope, githubDefaultScope,
+		gomniauth.OAuth2KeyAccessType, gomniauth.OAuth2AccessTypeOnline,
+		gomniauth.OAuth2KeyApprovalPrompt, gomniauth.OAuth2ApprovalPromptAuto)}
 	return p
 }
 
@@ -39,7 +40,7 @@ func (g *GithubProvider) Name() string {
 // GetBeginAuthURL gets the URL that the client must visit in order
 // to begin the authentication process.
 func (g *GithubProvider) GetBeginAuthURL(state *common.State) (string, error) {
-	return g.GetBeginAuthURLWithBase(g.config.GetString(OAuth2KeyAuthURL), state, g.config)
+	return g.GetBeginAuthURLWithBase(g.Config.GetString(gomniauth.OAuth2KeyAuthURL), state, g.Config)
 }
 
 // LoadUser uses the specified common.Credentials to access the users profile

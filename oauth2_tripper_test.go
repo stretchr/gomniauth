@@ -1,7 +1,6 @@
-package providers
+package gomniauth
 
 import (
-	"github.com/stretchr/gomniauth"
 	"github.com/stretchr/gomniauth/common"
 	"github.com/stretchr/stew/objects"
 	"github.com/stretchr/testify/assert"
@@ -13,7 +12,7 @@ func TestNewOAuth2Tripper(t *testing.T) {
 
 	g := new(OAuth2Provider)
 	creds := &common.Credentials{objects.M()}
-	var tripper gomniauth.Tripper = NewOAuth2Tripper(creds, g)
+	var tripper common.Tripper = NewOAuth2Tripper(creds, g)
 
 	if assert.NotNil(t, tripper) {
 		assert.Equal(t, creds, tripper.Credentials())

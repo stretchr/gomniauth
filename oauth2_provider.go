@@ -1,8 +1,8 @@
-package providers
+package gomniauth
 
 import (
 	"encoding/json"
-	"github.com/stretchr/gomniauth"
+
 	"github.com/stretchr/gomniauth/common"
 	"github.com/stretchr/stew/objects"
 	"io/ioutil"
@@ -51,7 +51,7 @@ const (
 )
 
 type OAuth2Provider struct {
-	Provider
+	BaseProvider
 }
 
 func (p *OAuth2Provider) GetBeginAuthURLWithBase(base string, state *common.State, config *common.Config) (string, error) {
@@ -69,7 +69,7 @@ func (p *OAuth2Provider) GetBeginAuthURLWithBase(base string, state *common.Stat
 		OAuth2KeyApprovalPrompt, config.GetStringOrEmpty(OAuth2KeyApprovalPrompt))
 
 	// set the state
-	stateValue, stateErr := state.SignedBase64(gomniauth.GetSecurityKey())
+	stateValue, stateErr := state.SignedBase64(GetSecurityKey())
 
 	if stateErr != nil {
 		return "", stateErr
@@ -108,14 +108,14 @@ func (g *OAuth2Provider) CompleteAuth(data objects.Map) (*common.Credentials, er
 	}
 
 	params := objects.M(OAuth2KeyGrantType, OAuth2GrantTypeAuthorizationCode,
-		OAuth2KeyRedirectUrl, g.config.GetStringOrEmpty(OAuth2KeyRedirectUrl),
-		OAuth2KeyScope, g.config.GetStringOrEmpty(OAuth2KeyScope),
+		OAuth2KeyRedirectUrl, g.Config.GetStringOrEmpty(OAuth2KeyRedirectUrl),
+		OAuth2KeyScope, g.Config.GetStringOrEmpty(OAuth2KeyScope),
 		OAuth2KeyCode, code,
-		OAuth2KeyClientID, g.config.GetStringOrEmpty(OAuth2KeyClientID),
-		OAuth2KeySecret, g.config.GetStringOrEmpty(OAuth2KeySecret))
+		OAuth2KeyClientID, g.Config.GetStringOrEmpty(OAuth2KeyClientID),
+		OAuth2KeySecret, g.Config.GetStringOrEmpty(OAuth2KeySecret))
 
 	// post the form
-	response, requestErr := client.PostForm(g.config.GetString(OAuth2KeyAuthURL), params.URLValues())
+	response, requestErr := client.PostForm(g.Config.GetString(OAuth2KeyAuthURL), params.URLValues())
 
 	if requestErr != nil {
 		return nil, requestErr

@@ -1,13 +1,14 @@
-package gomniauth
+package common
 
 import (
-	"github.com/stretchr/gomniauth/common"
 	"net/http"
 )
 
+// Tripper represents an object capable of making authenticated
+// round trips.
 type Tripper interface {
 	http.RoundTripper
 	// Credentials gets the authentication credentials that
 	// this Tripper will use.
-	Credentials() *common.Credentials
+	Credentials() *Credentials
 }
