@@ -62,17 +62,17 @@ func (g *GithubProvider) GetBeginAuthURL(state *common.State) (string, error) {
 	return oauth2.GetBeginAuthURLWithBase(g.config.GetString(oauth2.OAuth2KeyAuthURL), state, g.config)
 }
 
-// Load makes an authenticated request and returns the data in the
+// Get makes an authenticated request and returns the data in the
 // response as a data map.
-func (g *GithubProvider) Load(creds *common.Credentials, endpoint string) (objects.Map, error) {
-	return oauth2.Load(g, creds, endpoint)
+func (g *GithubProvider) Get(creds *common.Credentials, endpoint string) (objects.Map, error) {
+	return oauth2.Get(g, creds, endpoint)
 }
 
-// LoadUser uses the specified common.Credentials to access the users profile
+// GetUser uses the specified common.Credentials to access the users profile
 // from the remote provider, and builds the appropriate User object.
-func (g *GithubProvider) LoadUser(creds *common.Credentials) (common.User, error) {
+func (g *GithubProvider) GetUser(creds *common.Credentials) (common.User, error) {
 
-	profileData, err := g.Load(creds, githubEndpointProfile)
+	profileData, err := g.Get(creds, githubEndpointProfile)
 
 	if err != nil {
 		return nil, err

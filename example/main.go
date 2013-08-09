@@ -95,7 +95,7 @@ func main() {
 		*/
 
 		// load the user
-		user, userErr := provider.LoadUser(creds)
+		user, userErr := provider.GetUser(creds)
 
 		if userErr != nil {
 			return userErr

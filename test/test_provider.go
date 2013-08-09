@@ -31,14 +31,14 @@ func (p *TestProvider) CompleteAuth(data objects.Map) (*common.Credentials, erro
 	return args.Get(0).(*common.Credentials), args.Error(1)
 }
 
-func (p *TestProvider) Load(creds *common.Credentials, endpoint string) (objects.Map, error) {
+func (p *TestProvider) Get(creds *common.Credentials, endpoint string) (objects.Map, error) {
 	args := p.Called(creds, endpoint)
 	return args.Get(0).(objects.Map), args.Error(1)
 }
 
-// LoadUser uses the specified common.Credentials to access the users profile
+// GetUser uses the specified common.Credentials to access the users profile
 // from the remote provider, and builds the appropriate User object.
-func (p *TestProvider) LoadUser(creds *common.Credentials) (common.User, error) {
+func (p *TestProvider) GetUser(creds *common.Credentials) (common.User, error) {
 	args := p.Called(creds)
 	return args.Get(0).(common.User), args.Error(1)
 }

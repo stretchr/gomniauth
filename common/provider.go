@@ -20,13 +20,13 @@ type Provider interface {
 	// the appropriate Credentials.
 	CompleteAuth(data objects.Map) (*Credentials, error)
 
-	// LoadUser uses the specified Credentials to access the users profile
+	// GetUser uses the specified Credentials to access the users profile
 	// from the remote provider, and builds the appropriate User object.
-	LoadUser(creds *Credentials) (User, error)
+	GetUser(creds *Credentials) (User, error)
 
-	// Load makes an authenticated request and returns the data in the
+	// Get makes an authenticated request and returns the data in the
 	// response as a data map.
-	Load(creds *Credentials, endpoint string) (objects.Map, error)
+	Get(creds *Credentials, endpoint string) (objects.Map, error)
 
 	// GetClient gets an http.Client authenticated with the specified
 	// Credentials.

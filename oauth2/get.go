@@ -7,7 +7,7 @@ import (
 	"io/ioutil"
 )
 
-func Load(provider common.Provider, creds *common.Credentials, endpoint string) (objects.Map, error) {
+func Get(provider common.Provider, creds *common.Credentials, endpoint string) (objects.Map, error) {
 
 	client, clientErr := provider.GetClient(creds)
 

@@ -22,7 +22,7 @@ func TestGitHubImplementrsProvider(t *testing.T) {
 
 }
 
-func TestLoadUser(t *testing.T) {
+func TestGetUser(t *testing.T) {
 
 	g := Github("clientID", "secret", "http://myapp.com/")
 	creds := new(common.Credentials)
@@ -39,7 +39,7 @@ func TestLoadUser(t *testing.T) {
 
 	g.tripperFactory = testTripperFactory
 
-	user, err := g.LoadUser(creds)
+	user, err := g.GetUser(creds)
 
 	if assert.NoError(t, err) && assert.NotNil(t, user) {
 
