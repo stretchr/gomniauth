@@ -4,6 +4,4 @@ import (
 	"testing"
 )
 
-func TestSomething(t *testing.T) {
-	// test placeholder
-}
+func TestSomething(t *testing.T) {}

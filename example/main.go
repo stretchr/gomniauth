@@ -1,382 +1,124 @@
 package main
 
 import (
-	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/stretchr/gomniauth"
-	"github.com/stretchr/gomniauth/common"
 	"github.com/stretchr/gomniauth/providers"
 	"github.com/stretchr/goweb"
 	"github.com/stretchr/goweb/context"
-	"io/ioutil"
 	"log"
 	"net"
 	"net/http"
 	"os"
 	"os/signal"
-	"strings"
 	"time"
 )
 
-/*
-
-  This is a full web-stack example showing how to use gomniauth.
-
-	To run this app, just do:
-
-	    clear; go build main.go; sudo ./main; rm -f main;
-
-	NOTE: The domain is set to www.localhost.com, so you should route this
-	      properly by editing your /etc/hosts file.
-
-
-	Credit:
-
-		The auth buttons were made by this guy:
-
-			http://nicolasgallagher.com/lab/css3-social-signin-buttons/
-
-*/
-
-// Address is the local (or otherwise) address to
-// bind the server to.
-var Address string = ":80"
-
-// stateSecurityKey is a key that is used when hashing the
-// state to make sure it is tamper proof (note, it is NOT
-// encrypted - just security hashed)
-const stateSecurityKey = "REPLACE-THIS-TO-MAKE-IT-MORE-SECURE"
-
 const (
-	// CookieNameSession is the name of the session cookie
-	CookieNameSession string = "session"
+	// NOTE: Don't change this, the auth settings on the providers
+	// are coded to this path for this example.
+	Address string = ":8080"
 )
 
-// RedirectToLoginPage responds WithRedirect to the login page,
-// passing the current page as the 'target' parameter.
-var RedirectToLoginPage = func(c context.Context) error {
-	redirectUrl := "login?target=" + c.HttpRequest().URL.Path
-	log.Println("Example app: Redirecting to login page: %s", redirectUrl)
-	return goweb.Respond.WithRedirect(c, redirectUrl)
+func write(ctx context.Context, output string) {
+	ctx.HttpResponseWriter().Write([]byte(output))
+}
+
+func writeHeader(ctx context.Context) {
+	write(ctx, "Gomniauth - Example web app")
+}
+
+func respondWithError(ctx context.Context, errorMessage string) error {
+	writeHeader(ctx)
+	write(ctx, fmt.Sprintf("Error: %s", errorMessage))
+	return nil
 }
 
 func main() {
 
-	/*
-		Step 1. Create an AuthStore
-
-			- An AuthStore is responsible for caching your auth tokens so you
-			  don't have to send the user off to reauthenticate every time you
-			  want to access their remote data.
-
-	*/
-	authStore := &ExampleAuthStore{make(map[string]*common.Auth)}
+	// setup the providers
+	gomniauth.SetSecurityKey("yLiCQYG7CAflDavqGH461IO0MHp7TEbpg6TwHBWdJzNwYod1i5ZTbrIF5bEoO3oP") // NOTE: DO NOT COPY THIS - MAKE YOR OWN!
+	gomniauth.WithProviders(
+		providers.Github("3d1e6ba69036e0624b61", "7e8938928d802e7582908a5eadaaaf22d64babf1", "http://localhost:8080/auth/github/callback"))
 
 	/*
-		Step 2. Create and configure an AuthManager
+	   GET /auth/{provider}/login
 
-		  - Give it the authStore you created earlier
-		  - Give it all the providers you wish to support, remember you'll
-		    have to configure each provider for your application by specifying
-		    Client ID, secrets, callback URLs and scopes etc. depending on the
-		    auth type.
-
+	   Redirects them to the fmtin page for the specified provider.
 	*/
-	authManager := gomniauth.NewManager(authStore,
-		providers.Google("815669121291.apps.googleusercontent.com", "QrjJ2WevjIp1CbJxU18449RS", "http://www.localhost.com/auth/google/callback", "profile"),
-		providers.Github("3d1e6ba69036e0624b61", "7e8938928d802e7582908a5eadaaaf22d64babf1", "http://www.localhost.com/auth/github/callback", "user"))
+	goweb.Map("auth/{provider}/login", func(ctx context.Context) error {
 
-	// GET /
-	//
-	// Homepage
-	goweb.Map("GET", "/", func(c context.Context) error {
-
-		return goweb.Respond.With(c, http.StatusOK, []byte(`
-
-			<html>
-				<head>
-					<title>Welcome</title>
-				</head>
-				<body>
-					<h1>Omniauth Example Web app</h1>
-					<p>
-					</p>
-					<ul>
-						<li>
-							To get started, just try accessing this <a href="/protected">protected resource</a>.
-						</li>
-					</ul>
-				</body>
-			</html>
-
-		`))
-
-	})
-
-	// GET /protected
-	//
-	// Attempts to get a protected resource.
-	goweb.Map("GET", "/protected", func(c context.Context) error {
-
-		log.Print("Example app: User tried to access protected resource")
-
-		sessionCookie, sessionCookieErr := c.HttpRequest().Cookie(CookieNameSession)
-
-		log.Printf("Example app: Cookies: %s", c.HttpRequest().Cookies())
-
-		// do they have a session ID?
-		if sessionCookie == nil || sessionCookieErr != nil {
-			// no - they will need to login
-			return RedirectToLoginPage(c)
-		}
-
-		segs := strings.Split(sessionCookie.Value, ":")
-		providerName := segs[0]
-		sessionId := segs[1]
-
-		session := authManager.NewSession(sessionId, authManager.Provider(providerName))
-		if authed, _ := session.IsAuthenticated(); !authed {
-			// no - they will need to login
-			return RedirectToLoginPage(c)
-		}
-
-		output := `
-
-			<html>
-				<head>
-					<title>Welcome</title>
-				</head>
-				<body>
-					<h1>Protected Resource</h1>
-					<h3>
-						You have successfully accessed the protected resource.
-					</h3>
-					<h3>Log out?</h3>
-					<ul>
-						<li>
-							If you <a href="/logout">delete your session cookie</a> you will be logged out
-						</li>
-						<li>
-							Or you can <a href="/deauth">expire the internal auth token</a> - which will have
-							the same effect.
-						</li>
-					</ul>
-					<h3>
-						Here's a bit about you
-					</h3>
-					<table border="1" bordercolor="#000000" style="background-color:#EAEAEA" width="100%" cellpadding="3" cellspacing="2">
-						<tr>
-							<td>Key</td>
-							<td>Value</td>
-						</tr>
-						<tr><td></td><td></td></tr>
-						$$$
-					</table>
-					<ul>
-						<li>
-							Try logging in with a different provider to see different information.
-							Of course, you'll have to <a href="/logout">log out</a> first.
-						</li>
-					</ul>
-				</body>
-			</html>
-
-		`
-
-		client, err := session.AuthenticatedClient()
+		provider, err := gomniauth.Provider(ctx.PathValue("provider"))
 
 		if err != nil {
-			//TODO: make this not bad
-			return goweb.Respond.WithStatus(c, http.StatusInternalServerError)
+			return err
 		}
 
-		url := ""
+		state := gomniauth.NewState("after", "success")
 
-		switch session.Provider().Name() {
-		case "Github":
-			url = "https://api.github.com/user"
-		case "Google":
-			//url = "https://www.googleapis.com/plus/v1/people/me"
-			url = "https://www.googleapis.com/oauth2/v3/userinfo"
-		}
+		authUrl, err := provider.GetBeginAuthURL(state)
 
-		resp, err := client.Get(url)
 		if err != nil {
-			//TODO: make this not bad
-			return goweb.Respond.WithStatus(c, http.StatusInternalServerError)
-		}
-		defer resp.Body.Close()
-
-		body, _ := ioutil.ReadAll(resp.Body)
-
-		var userData map[string]interface{}
-		json.Unmarshal(body, &userData)
-
-		replacement := ""
-		for k, v := range userData {
-			replacement += fmt.Sprintf("<tr><td>%s</td><td>%v</td></tr>", k, v)
+			return err
 		}
 
-		output = strings.Replace(output, "$$$", replacement, 1)
-
-		return goweb.Respond.With(c, http.StatusOK, []byte(output))
-	})
-
-	// GET /logout
-	//
-	// Logout page
-	goweb.Map("GET", "/logout", func(c context.Context) error {
-
-		log.Printf("Example app: Logging out")
-
-		// delete all cookies
-		for _, cookie := range c.HttpRequest().Cookies() {
-			cookie.MaxAge = -1
-			cookie.Value = ""
-			cookie.Path = "/"
-			http.SetCookie(c.HttpResponseWriter(), cookie)
-		}
-
-		return goweb.Respond.WithRedirect(c, "/")
+		// redirect
+		return goweb.Respond.WithRedirect(ctx, authUrl)
 
 	})
 
-	// GET /deauth
-	//
-	// Page that deletes the
-	goweb.Map("GET", "/deauth", func(c context.Context) error {
+	goweb.Map("/auth/{provider}/callback", func(ctx context.Context) error {
 
-		log.Printf("Example app: Forgetting user (deleting their auth token in the AuthStore)")
+		provider, err := gomniauth.Provider(ctx.PathValue("provider"))
 
-		sessionCookie, sessionCookieErr := c.HttpRequest().Cookie(CookieNameSession)
-
-		// do they have a session ID?
-		if sessionCookie == nil || sessionCookieErr != nil {
-			// no - they will need to login
-			return RedirectToLoginPage(c)
+		if err != nil {
+			return err
 		}
 
-		segs := strings.Split(sessionCookie.Value, ":")
-		sessionId := segs[1]
+		creds, err := provider.CompleteAuth(ctx.QueryParams())
 
-		authManager.AuthStore().DeleteAuth(sessionId)
-
-		// send them home
-		return goweb.Respond.WithRedirect(c, "/")
-
-	})
-
-	// GET /login
-	//
-	// Presents the user with a list of providers they can use to login.
-	goweb.Map("GET", "/login", func(c context.Context) error {
-
-		// create them a session ID
-		sessionId := gomniauth.CreateSessionID()
-
-		// get the target URL (URL to redirect to after they've logged in)
-		targetUrl := c.QueryValue("target")
-
-		c.HttpResponseWriter().Write([]byte(`
-			<html>
-				<head>
-					<title>Login</title>
-					<link rel="stylesheet" href="/assets/authbuttons/auth-buttons.css">
-				</head>
-				<body>
-					<h2>Login</h2>
-					<p>Select your method of login:</p>
-					<ul>
-		`))
-
-		for providerName, provider := range authManager.Providers() {
-
-			state := gomniauth.StateWithID(sessionId)
-			state["targetUrl"] = targetUrl
-			authUrl, _ := gomniauth.GetAuthURL(provider, state, stateSecurityKey)
-
-			c.HttpResponseWriter().Write([]byte(`
-						<li style='padding:5px;list-item:none'>
-			`))
-			c.HttpResponseWriter().Write([]byte(fmt.Sprintf("<a class='btn-auth btn-%s' href=\"%s\">Sign in with %s</a>", providerName, authUrl, provider.Name())))
-			c.HttpResponseWriter().Write([]byte(`
-						</li>
-			`))
+		if err != nil {
+			return err
 		}
 
-		c.HttpResponseWriter().Write([]byte(`
-					</ul>
-				</body>
-			</html>
-		`))
+		/*
+			// get the state
+			state, stateErr := gomniauth.StateFromParam(ctx.QueryValue("state"))
 
-		return nil
-
-	})
-
-	// GET /auth/oauth2/{provider}/callback
-	//
-	// OAuth callback handler
-	goweb.Map("/auth/{provider}/callback", func(c context.Context) error {
-
-		provider, providerOk := authManager.Providers()[c.PathValue("provider")]
-
-		if !providerOk {
-			return errors.New("Unsupported provider")
-		}
-
-		state, stateErr := gomniauth.StateFromRequest(provider.AuthType(), c.HttpRequest(), stateSecurityKey)
-
-		if stateErr != nil {
-			return stateErr
-		}
-
-		// get the key from the state
-		returnedSessionId := state[gomniauth.StateKeyID].(string)
-
-		// get the authSession
-		authSession := authManager.NewSession(returnedSessionId, provider)
-		callbackErr := authSession.HandleCallback(c.HttpRequest())
-
-		if callbackErr != nil {
-
-			// save their session ID in the cookie
-			cookie := &http.Cookie{Name: CookieNameSession,
-				Value: fmt.Sprintf("%s:%s", provider.Name(), returnedSessionId),
-				Path:  "/",
-			}
-			http.SetCookie(c.HttpResponseWriter(), cookie)
-
-			log.Printf("Example app: User has been logged in with session ID: %s", returnedSessionId)
-			log.Printf("  Set cookie: %s", cookie)
-
-			targetUrl := state["targetUrl"].(string)
-
-			if len(targetUrl) == 0 {
-				targetUrl = "/"
+			if stateErr != nil {
+				return stateErr
 			}
 
-			goweb.Respond.WithRedirect(c, targetUrl)
+			// redirect to the 'after' URL
+			afterUrl := state.GetStringOrDefault("after", "error?e=No after parameter was set in the state")
 
+		*/
+
+		// load the user
+		user, userErr := provider.LoadUser(creds)
+
+		if userErr != nil {
+			return userErr
 		}
 
-		return nil
-	})
+		return goweb.API.RespondWithData(ctx, user)
 
-	// expose the assets too
-	goweb.MapStatic("assets", "assets")
+		// redirect
+		//return goweb.Respond.WithRedirect(ctx, afterUrl)
+
+	})
 
 	/*
-
+	   ----------------------------------------------------------------
 	   START OF WEB SERVER CODE
-
+	   ----------------------------------------------------------------
 	*/
 
-	log.Print("Gomniauth - Example web app")
-	log.Print("by Mat Ryer and Tyler Bunnell")
-	log.Print(" ")
-	log.Print("Starting Goweb powered server...")
+	log.Println("Starting...")
+	fmt.Print("Gomniauth - Example web app\n")
+	fmt.Print("by Mat Ryer and Tyler Bunnell\n")
+	fmt.Print(" \n")
+	fmt.Print("Starting Goweb powered server...\n")
 
 	// make a http server using the goweb.DefaultHttpHandler()
 	s := &http.Server{
@@ -391,16 +133,16 @@ func main() {
 	signal.Notify(c, os.Interrupt)
 	listener, listenErr := net.Listen("tcp", Address)
 
-	log.Printf("  visit: %s", Address)
+	fmt.Printf("  visit: %s\n", Address)
 
 	if listenErr != nil {
 		log.Fatalf("Could not listen: %s", listenErr)
 	}
 
-	log.Println("")
-	log.Println("Try some of these routes:")
-	log.Printf("%s", goweb.DefaultHttpHandler())
-	log.Println("\n\n")
+	fmt.Println("\n")
+	fmt.Println("Try some of these routes:\n")
+	fmt.Printf("%s", goweb.DefaultHttpHandler())
+	fmt.Println("\n\n")
 
 	go func() {
 		for _ = range c {
@@ -408,51 +150,28 @@ func main() {
 			// sig is a ^C, handle it
 
 			// stop the HTTP server
-			log.Print("Stopping the server...")
+			fmt.Print("Stopping the server...\n")
 			listener.Close()
 
 			/*
 			   Tidy up and tear down
 			*/
-			log.Print("Tearing down...")
+			fmt.Print("Tearing down...\n")
 
 			// TODO: tidy code up here
 
-			log.Fatal("Finished - bye bye.  ;-)")
+			log.Fatal("Finished - bye bye.  ;-)\n")
 
 		}
 	}()
 
 	// begin the server
-	log.Fatalf("Error in Serve: %s", s.Serve(listener))
+	log.Fatalf("Error in Serve: %s\n", s.Serve(listener))
 
 	/*
-
+	   ----------------------------------------------------------------
 	   END OF WEB SERVER CODE
-
+	   ----------------------------------------------------------------
 	*/
 
-}
-
-// ExampleAuthStore is an AuthStore that just keeps the Auth objects
-// in memory.
-type ExampleAuthStore struct {
-	auths map[string]*common.Auth
-}
-
-func (s *ExampleAuthStore) GetAuth(id string) (*common.Auth, error) {
-	log.Printf("ExampleAuthStore: GetAuth %s", id)
-	log.Printf("  returning: %v", s.auths[id])
-	return s.auths[id], nil
-}
-func (s *ExampleAuthStore) PutAuth(id string, auth *common.Auth) error {
-	log.Printf("ExampleAuthStore: PutAuth %s", id)
-	log.Printf("  putting: %v", auth)
-	s.auths[id] = auth
-	return nil
-}
-func (s *ExampleAuthStore) DeleteAuth(id string) error {
-	log.Printf("ExampleAuthStore: DeleteAuth: %s", id)
-	delete(s.auths, id)
-	return nil
 }

@@ -2,16 +2,29 @@ package common
 
 import (
 	"github.com/stretchr/stew/objects"
+	"net/http"
 )
 
+// Provider represents an authentication provider.
 type Provider interface {
 
-	// Name gets the name of this provider.  Name must be URL friendly.
+	// Name is the unique name for this provider.
 	Name() string
 
-	// Config gets the default configuration for this Provider.
-	Config() objects.Map
+	// GetBeginAuthURL gets the URL that the client must visit in order
+	// to begin the authentication process.
+	GetBeginAuthURL(state *State) (string, error)
 
-	// common.AuthType gets the AuthType that this provider uses.
-	AuthType() AuthType
+	// CompleteAuth takes a map of arguments that are used to
+	// complete the authorisation process, completes it, and returns
+	// the appropriate Credentials.
+	CompleteAuth(data objects.Map) (*Credentials, error)
+
+	// LoadUser uses the specified Credentials to access the users profile
+	// from the remote provider, and builds the appropriate User object.
+	LoadUser(creds *Credentials) (User, error)
+
+	// GetClient gets an http.Client authenticated with the specified
+	// Credentials.
+	GetClient(creds *Credentials) (*http.Client, error)
 }
