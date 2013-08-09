@@ -75,24 +75,36 @@ func main() {
 			return err
 		}
 
-		_, err = provider.CompleteAuth(ctx.QueryParams())
+		creds, err := provider.CompleteAuth(ctx.QueryParams())
 
 		if err != nil {
 			return err
 		}
 
-		// get the state
-		state, stateErr := gomniauth.StateFromParam(ctx.QueryValue("state"))
+		/*
+			// get the state
+			state, stateErr := gomniauth.StateFromParam(ctx.QueryValue("state"))
 
-		if stateErr != nil {
-			return stateErr
+			if stateErr != nil {
+				return stateErr
+			}
+
+			// redirect to the 'after' URL
+			afterUrl := state.GetStringOrDefault("after", "error?e=No after parameter was set in the state")
+
+		*/
+
+		// load the user
+		user, userErr := provider.LoadUser(creds)
+
+		if userErr != nil {
+			return userErr
 		}
 
-		// redirect to the 'after' URL
-		afterUrl := state.GetStringOrDefault("after", "error?e=No after parameter was set in the state")
+		return goweb.API.RespondWithData(ctx, user)
 
 		// redirect
-		return goweb.Respond.WithRedirect(ctx, afterUrl)
+		//return goweb.Respond.WithRedirect(ctx, afterUrl)
 
 	})
 
