@@ -54,3 +54,17 @@ func TestNewUser(t *testing.T) {
 	mock.AssertExpectationsForObjects(t, testProvider.Mock)
 
 }
+
+func TestIDForProvider(t *testing.T) {
+
+	user := new(User)
+	user.data = objects.M(
+		common.UserKeyProviderCredentials,
+		map[string]*common.Credentials{
+			"github": &common.Credentials{objects.M(common.UserKeyID, "githubid")},
+			"google": &common.Credentials{objects.M(common.UserKeyID, "googleid")}})
+
+	assert.Equal(t, "githubid", user.IDForProvider("github"))
+	assert.Equal(t, "googleid", user.IDForProvider("google"))
+
+}

@@ -57,6 +57,12 @@ func (u *User) ProviderCredentials() map[string]*common.Credentials {
 	return u.Data().Get(common.UserKeyProviderCredentials).(map[string]*common.Credentials)
 }
 
+// IDForProvider gets the ID value for the specified provider name for
+// this user from the ProviderCredentials data.
+func (u *User) IDForProvider(provider string) string {
+	return u.ProviderCredentials()[provider].GetStringOrEmpty(common.UserKeyID)
+}
+
 // ID gets this user's globally unique ID.
 func (u *User) ID() string {
 	return u.Data().GetStringOrEmpty(common.UserKeyID)
