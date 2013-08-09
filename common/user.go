@@ -1,26 +1,26 @@
 package common
 
-import (
-	"github.com/stretchr/stew/objects"
-)
+type User interface {
 
-type User objects.Map
+	// Email gets the users email address.
+	Email() string
 
-func (u User) Email() string {
-	return ""
-}
-func (u User) FullName() string {
-	return ""
-}
-func (u User) ProviderCredentials() map[string]Credentials {
-	return nil
-}
-func (u User) ID() string {
-	return ""
-}
-func (u User) AvatarURL() string {
-	return ""
-}
-func (u User) AuthToken() string {
-	return ""
+	// Name gets the users full name.
+	Name() string
+
+	// Nickname gets the users nickname or username.
+	Nickname() string
+
+	// AvatarURL gets the URL of an image representing the user.
+	AvatarURL() string
+
+	// ProviderCredentials gets a map of Credentials (by provider name).
+	ProviderCredentials() map[string]*Credentials
+
+	// ID gets this user's globally unique ID.
+	ID() string
+
+	// AddProviderCredentials adds the provider credentials to the
+	// ProviderCredentials for this User.
+	AddProviderCredentials(Provider, *Credentials)
 }

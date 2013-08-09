@@ -16,7 +16,7 @@ func TestOAuth2HandlerBeginAuthURLWithBase(t *testing.T) {
 	config := &common.Config{objects.M()}
 	config.
 		Set("client_id", "client_id").
-		Set("redirect_url", "redirect_url").
+		Set("redirect_uri", "redirect_uri").
 		Set("scope", "scope").
 		Set("access_type", "access_type").
 		Set("approval_prompt", "approval_prompt")
@@ -28,7 +28,7 @@ func TestOAuth2HandlerBeginAuthURLWithBase(t *testing.T) {
 
 	if assert.NoError(t, err) {
 		assert.Contains(t, url, "client_id=client_id")
-		assert.Contains(t, url, "redirect_url=redirect_url")
+		assert.Contains(t, url, "redirect_uri=redirect_uri")
 		assert.Contains(t, url, "scope=scope")
 		assert.Contains(t, url, "access_type=access_type")
 		assert.Contains(t, url, "approval_prompt=approval_prompt")

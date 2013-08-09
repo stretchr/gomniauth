@@ -39,7 +39,7 @@ func TestOAuth2Provider_CompleteAuth_URLEncodedResponse(t *testing.T) {
 	testTripperFactory.On("NewTripper", common.EmptyCredentials, mock.Anything).Return(testTripper, nil)
 	testTripper.On("RoundTrip", mock.Anything).Return(testResponse, nil)
 
-	data := objects.M(OAuth2KeyCode, "123")
+	data := objects.M(OAuth2KeyCode, []string{"123"})
 	creds, err := CompleteAuth(testTripperFactory, data, config, testProvider)
 
 	if assert.NoError(t, err) {
@@ -80,7 +80,7 @@ func TestOAuth2Provider_Non200Response(t *testing.T) {
 	testTripperFactory.On("NewTripper", common.EmptyCredentials, mock.Anything).Return(testTripper, nil)
 	testTripper.On("RoundTrip", mock.Anything).Return(testResponse, nil)
 
-	data := objects.M(OAuth2KeyCode, "123")
+	data := objects.M(OAuth2KeyCode, []string{"123"})
 	_, err := CompleteAuth(testTripperFactory, data, config, testProvider)
 
 	if assert.Error(t, err) {
@@ -117,7 +117,7 @@ func TestOAuth2Provider_CompleteAuth_JSON(t *testing.T) {
 	testTripperFactory.On("NewTripper", common.EmptyCredentials, mock.Anything).Return(testTripper, nil)
 	testTripper.On("RoundTrip", mock.Anything).Return(testResponse, nil)
 
-	data := objects.M(OAuth2KeyCode, "123")
+	data := objects.M(OAuth2KeyCode, []string{"123"})
 	creds, err := CompleteAuth(testTripperFactory, data, config, testProvider)
 
 	if assert.NoError(t, err) {

@@ -3,8 +3,13 @@ package providers
 import (
 	"github.com/stretchr/gomniauth/common"
 	"github.com/stretchr/gomniauth/oauth2"
+	"github.com/stretchr/gomniauth/test"
 	"github.com/stretchr/stew/objects"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
+	"io/ioutil"
+	"net/http"
+	"strings"
 	"testing"
 )
 
@@ -14,6 +19,24 @@ func TestGitHubImplementrsProvider(t *testing.T) {
 	provider = new(GithubProvider)
 
 	assert.NotNil(t, provider)
+
+}
+
+func TestLoadUser(t *testing.T) {
+
+	g := Github("clientID", "secret", "http://myapp.com/")
+
+	testTripperFactory := new(test.TestTripperFactory)
+	testTripper := new(test.TestTripper)
+	testTripperFactory.On("NewTripper", mock.Anything, g).Return(testTripper, nil)
+	testResponse := new(http.Response)
+	testResponse.Header = make(http.Header)
+	testResponse.Header.Set("Content-Type", "application/json")
+	testResponse.StatusCode = 200
+	testResponse.Body = ioutil.NopCloser(strings.NewReader(`{"id":"uniqueid","login":"loginname","email":"email@address.com","avatar_url":"http://myface.com/","blog":"http://blog.com/"}`))
+	testTripper.On("RoundTrip", mock.Anything).Return(testResponse, nil)
+
+	g.tripperFactory = testTripperFactory
 
 }
 
@@ -72,7 +95,7 @@ func TestGitHubGetBeginAuthURL(t *testing.T) {
 
 	if assert.NoError(t, err) {
 		assert.Contains(t, url, "client_id=clientID")
-		assert.Contains(t, url, "redirect_url=http%3A%2F%2Fmyapp.com%2F")
+		assert.Contains(t, url, "redirect_uri=http%3A%2F%2Fmyapp.com%2F")
 		assert.Contains(t, url, "scope="+githubDefaultScope)
 		assert.Contains(t, url, "access_type="+oauth2.OAuth2AccessTypeOnline)
 		assert.Contains(t, url, "approval_prompt="+oauth2.OAuth2ApprovalPromptAuto)
