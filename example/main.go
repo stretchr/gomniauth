@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/stretchr/gomniauth"
+	"github.com/stretchr/gomniauth/providers"
 	"github.com/stretchr/goweb"
 	"github.com/stretchr/goweb/context"
 	"log"
@@ -14,6 +15,8 @@ import (
 )
 
 const (
+	// NOTE: Don't change this, the auth settings on the providers
+	// are coded to this path for this example.
 	Address string = ":8080"
 )
 
@@ -33,7 +36,10 @@ func respondWithError(ctx context.Context, errorMessage string) error {
 
 func main() {
 
-	gomniauth.WithProviders()
+	// setup the providers
+	gomniauth.SetSecurityKey("yLiCQYG7CAflDavqGH461IO0MHp7TEbpg6TwHBWdJzNwYod1i5ZTbrIF5bEoO3oP") // NOTE: DO NOT COPY THIS - MAKE YOR OWN!
+	gomniauth.WithProviders(
+		providers.Github("3d1e6ba69036e0624b61", "7e8938928d802e7582908a5eadaaaf22d64babf1", "http://localhost:8080/auth/github/callback"))
 
 	/*
 	   GET /auth/{provider}/login
@@ -42,13 +48,15 @@ func main() {
 	*/
 	goweb.Map("auth/{provider}/login", func(ctx context.Context) error {
 
-		provider, err := gomniauth.Provider(ctx.PathParam("provider"))
+		provider, err := gomniauth.Provider(ctx.PathValue("provider"))
 
 		if err != nil {
 			return err
 		}
 
-		authUrl, err := provider.GetBeginAuthURL(nil)
+		state := gomniauth.NewState("after", "success")
+
+		authUrl, err := provider.GetBeginAuthURL(state)
 
 		if err != nil {
 			return err
@@ -56,6 +64,35 @@ func main() {
 
 		// redirect
 		return goweb.Respond.WithRedirect(ctx, authUrl)
+
+	})
+
+	goweb.Map("/auth/{provider}/callback", func(ctx context.Context) error {
+
+		provider, err := gomniauth.Provider(ctx.PathValue("provider"))
+
+		if err != nil {
+			return err
+		}
+
+		_, err = provider.CompleteAuth(ctx.QueryParams())
+
+		if err != nil {
+			return err
+		}
+
+		// get the state
+		state, stateErr := gomniauth.StateFromParam(ctx.QueryValue("state"))
+
+		if stateErr != nil {
+			return stateErr
+		}
+
+		// redirect to the 'after' URL
+		afterUrl := state.GetStringOrDefault("after", "error?e=No after parameter was set in the state")
+
+		// redirect
+		return goweb.Respond.WithRedirect(ctx, afterUrl)
 
 	})
 

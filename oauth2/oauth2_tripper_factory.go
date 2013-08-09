@@ -1,4 +1,4 @@
-package gomniauth
+package oauth2
 
 import (
 	"github.com/stretchr/gomniauth/common"

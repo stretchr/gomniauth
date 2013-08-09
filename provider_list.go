@@ -18,6 +18,7 @@ type ProviderList struct {
 // WithProviders generates a new ProviderList which should be
 // used to interact with Gomniauth services.
 func WithProviders(providers ...common.Provider) *ProviderList {
+	GetSecurityKey()
 	list := &ProviderList{providers}
 	SharedProviderList = list
 	return list
@@ -44,11 +45,4 @@ func (l *ProviderList) Provider(name string) (common.Provider, error) {
 // Providers gets all registered Provider objects.
 func (l *ProviderList) Providers() []common.Provider {
 	return l.providers
-}
-
-// Provider gets a provider by name from the
-// SharedProviderList, or returns a common.MissingProviderError
-// if no provider with that name is registered.
-func Provider(name string) (common.Provider, error) {
-	return SharedProviderList.Provider(name)
 }

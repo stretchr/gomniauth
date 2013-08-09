@@ -1,4 +1,4 @@
-package gomniauth
+package oauth2
 
 import (
 	"github.com/stretchr/gomniauth/common"
@@ -13,42 +13,9 @@ import (
 	"time"
 )
 
-func TestOAuth2HandlerBeginAuthURLWithBase(t *testing.T) {
-
-	SecurityKey = "ABC123"
-
-	h := &OAuth2Provider{}
-	base := "https://base.url/auth"
-
-	config := &common.Config{objects.M()}
-	config.
-		Set("client_id", "client_id").
-		Set("redirect_url", "redirect_url").
-		Set("scope", "scope").
-		Set("access_type", "access_type").
-		Set("approval_prompt", "approval_prompt")
-
-	state := &common.State{objects.M("after", "http://www.stretchr.com/")}
-	base64State, _ := state.Base64()
-
-	url, err := h.GetBeginAuthURLWithBase(base, state, config)
-
-	if assert.NoError(t, err) {
-		assert.Contains(t, url, "client_id=client_id")
-		assert.Contains(t, url, "redirect_url=redirect_url")
-		assert.Contains(t, url, "scope=scope")
-		assert.Contains(t, url, "access_type=access_type")
-		assert.Contains(t, url, "approval_prompt=approval_prompt")
-		assert.Contains(t, url, "state="+base64State)
-	}
-
-}
-
 func TestOAuth2Provider_CompleteAuth_URLEncodedResponse(t *testing.T) {
 
-	g := &OAuth2Provider{} // ("clientID", "secret", "http://myapp.com/")
-
-	g.Config = &common.Config{
+	config := &common.Config{
 		objects.M(
 			OAuth2KeyRedirectUrl, OAuth2KeyRedirectUrl,
 			OAuth2KeyScope, OAuth2KeyScope,
@@ -59,8 +26,8 @@ func TestOAuth2Provider_CompleteAuth_URLEncodedResponse(t *testing.T) {
 
 	testTripperFactory := new(test.TestTripperFactory)
 	testTripper := new(test.TestTripper)
+	testProvider := new(test.TestProvider)
 
-	g.SetTripperFactory(testTripperFactory)
 	creds := new(common.Credentials)
 
 	testResponse := new(http.Response)
@@ -73,7 +40,7 @@ func TestOAuth2Provider_CompleteAuth_URLEncodedResponse(t *testing.T) {
 	testTripper.On("RoundTrip", mock.Anything).Return(testResponse, nil)
 
 	data := objects.M(OAuth2KeyCode, "123")
-	creds, err := g.CompleteAuth(data)
+	creds, err := CompleteAuth(testTripperFactory, data, config, testProvider)
 
 	if assert.NoError(t, err) {
 		if assert.NotNil(t, creds, "Creds should be returned") {
@@ -85,15 +52,13 @@ func TestOAuth2Provider_CompleteAuth_URLEncodedResponse(t *testing.T) {
 		}
 	}
 
-	mock.AssertExpectationsForObjects(t, testTripperFactory.Mock, testTripper.Mock)
+	mock.AssertExpectationsForObjects(t, testTripperFactory.Mock, testTripper.Mock, testProvider.Mock)
 
 }
 
-func TestOAuth2Provider_CompleteAuth_JSON(t *testing.T) {
+func TestOAuth2Provider_Non200Response(t *testing.T) {
 
-	g := &OAuth2Provider{} // ("clientID", "secret", "http://myapp.com/")
-
-	g.Config = &common.Config{
+	config := &common.Config{
 		objects.M(
 			OAuth2KeyRedirectUrl, OAuth2KeyRedirectUrl,
 			OAuth2KeyScope, OAuth2KeyScope,
@@ -104,8 +69,43 @@ func TestOAuth2Provider_CompleteAuth_JSON(t *testing.T) {
 
 	testTripperFactory := new(test.TestTripperFactory)
 	testTripper := new(test.TestTripper)
+	testProvider := new(test.TestProvider)
 
-	g.SetTripperFactory(testTripperFactory)
+	testResponse := new(http.Response)
+	testResponse.Header = make(http.Header)
+	testResponse.Header.Set("Content-Type", "text/plain")
+	testResponse.StatusCode = 401
+	testResponse.Body = ioutil.NopCloser(strings.NewReader("No mate"))
+
+	testTripperFactory.On("NewTripper", common.EmptyCredentials, mock.Anything).Return(testTripper, nil)
+	testTripper.On("RoundTrip", mock.Anything).Return(testResponse, nil)
+
+	data := objects.M(OAuth2KeyCode, "123")
+	_, err := CompleteAuth(testTripperFactory, data, config, testProvider)
+
+	if assert.Error(t, err) {
+		assert.IsType(t, &common.AuthServerError{}, err)
+	}
+
+	mock.AssertExpectationsForObjects(t, testTripperFactory.Mock, testTripper.Mock, testProvider.Mock)
+
+}
+
+func TestOAuth2Provider_CompleteAuth_JSON(t *testing.T) {
+
+	config := &common.Config{
+		objects.M(
+			OAuth2KeyRedirectUrl, OAuth2KeyRedirectUrl,
+			OAuth2KeyScope, OAuth2KeyScope,
+			OAuth2KeyClientID, OAuth2KeyClientID,
+			OAuth2KeySecret, OAuth2KeySecret,
+			OAuth2KeyAuthURL, OAuth2KeyAuthURL,
+			OAuth2KeyTokenURL, OAuth2KeyTokenURL)}
+
+	testTripperFactory := new(test.TestTripperFactory)
+	testTripper := new(test.TestTripper)
+	testProvider := new(test.TestProvider)
+
 	creds := new(common.Credentials)
 
 	testResponse := new(http.Response)
@@ -118,7 +118,7 @@ func TestOAuth2Provider_CompleteAuth_JSON(t *testing.T) {
 	testTripper.On("RoundTrip", mock.Anything).Return(testResponse, nil)
 
 	data := objects.M(OAuth2KeyCode, "123")
-	creds, err := g.CompleteAuth(data)
+	creds, err := CompleteAuth(testTripperFactory, data, config, testProvider)
 
 	if assert.NoError(t, err) {
 		if assert.NotNil(t, creds, "Creds should be returned") {
@@ -130,6 +130,6 @@ func TestOAuth2Provider_CompleteAuth_JSON(t *testing.T) {
 		}
 	}
 
-	mock.AssertExpectationsForObjects(t, testTripperFactory.Mock, testTripper.Mock)
+	mock.AssertExpectationsForObjects(t, testTripperFactory.Mock, testTripper.Mock, testProvider.Mock)
 
 }

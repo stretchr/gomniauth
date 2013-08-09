@@ -1,8 +1,8 @@
 package providers
 
 import (
-	"github.com/stretchr/gomniauth"
 	"github.com/stretchr/gomniauth/common"
+	"github.com/stretchr/gomniauth/oauth2"
 	"github.com/stretchr/stew/objects"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -24,20 +24,33 @@ func TestNewGithub(t *testing.T) {
 	if assert.NotNil(t, g) {
 
 		// check config
-		if assert.NotNil(t, g.Config) {
+		if assert.NotNil(t, g.config) {
 
-			assert.Equal(t, "clientID", g.Config.Get(gomniauth.OAuth2KeyClientID))
-			assert.Equal(t, "secret", g.Config.Get(gomniauth.OAuth2KeySecret))
-			assert.Equal(t, "http://myapp.com/", g.Config.Get(gomniauth.OAuth2KeyRedirectUrl))
-			assert.Equal(t, githubDefaultScope, g.Config.Get(gomniauth.OAuth2KeyScope))
+			assert.Equal(t, "clientID", g.config.Get(oauth2.OAuth2KeyClientID))
+			assert.Equal(t, "secret", g.config.Get(oauth2.OAuth2KeySecret))
+			assert.Equal(t, "http://myapp.com/", g.config.Get(oauth2.OAuth2KeyRedirectUrl))
+			assert.Equal(t, githubDefaultScope, g.config.Get(oauth2.OAuth2KeyScope))
 
-			assert.Equal(t, githubAuthURL, g.Config.Get(gomniauth.OAuth2KeyAuthURL))
-			assert.Equal(t, githubTokenURL, g.Config.Get(gomniauth.OAuth2KeyTokenURL))
+			assert.Equal(t, githubAuthURL, g.config.Get(oauth2.OAuth2KeyAuthURL))
+			assert.Equal(t, githubTokenURL, g.config.Get(oauth2.OAuth2KeyTokenURL))
 
 		}
 
 		// check factory
 
+	}
+
+}
+
+func TestGithubTripperFactory(t *testing.T) {
+
+	g := Github("clientID", "secret", "http://myapp.com/")
+	g.tripperFactory = nil
+
+	f := g.TripperFactory()
+
+	if assert.NotNil(t, f) {
+		assert.Equal(t, f, g.tripperFactory)
 	}
 
 }
@@ -49,7 +62,7 @@ func TestGithubName(t *testing.T) {
 
 func TestGitHubGetBeginAuthURL(t *testing.T) {
 
-	gomniauth.SecurityKey = "ABC123"
+	common.SetSecurityKey("ABC123")
 
 	state := &common.State{objects.M("after", "http://www.stretchr.com/")}
 
@@ -61,8 +74,8 @@ func TestGitHubGetBeginAuthURL(t *testing.T) {
 		assert.Contains(t, url, "client_id=clientID")
 		assert.Contains(t, url, "redirect_url=http%3A%2F%2Fmyapp.com%2F")
 		assert.Contains(t, url, "scope="+githubDefaultScope)
-		assert.Contains(t, url, "access_type="+gomniauth.OAuth2AccessTypeOnline)
-		assert.Contains(t, url, "approval_prompt="+gomniauth.OAuth2ApprovalPromptAuto)
+		assert.Contains(t, url, "access_type="+oauth2.OAuth2AccessTypeOnline)
+		assert.Contains(t, url, "approval_prompt="+oauth2.OAuth2ApprovalPromptAuto)
 	}
 
 }

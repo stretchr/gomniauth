@@ -11,4 +11,8 @@ type Tripper interface {
 	// Credentials gets the authentication credentials that
 	// this Tripper will use.
 	Credentials() *Credentials
+
+	// Provider gets the Provider that this tripper will make
+	// requests to.
+	Provider() Provider
 }

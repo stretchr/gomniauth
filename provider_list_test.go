@@ -19,6 +19,8 @@ func TestInterface(t *testing.T) {
 
 func TestWithProviders(t *testing.T) {
 
+	common.SetSecurityKey("ABC123")
+
 	prov1 := new(test.TestProvider)
 	prov2 := new(test.TestProvider)
 
@@ -71,34 +73,6 @@ func TestProviderListProvider(t *testing.T) {
 
 	// check nonsense name
 	returnedProv, err = list.Provider("no such provider")
-
-	if assert.Nil(t, returnedProv) {
-		assert.IsType(t, &common.MissingProviderError{}, err, "MissingProviderError expected")
-	}
-
-	mock.AssertExpectationsForObjects(t, prov1.Mock, prov2.Mock)
-
-}
-
-func TestProvider(t *testing.T) {
-
-	prov1 := new(test.TestProvider)
-	prov2 := new(test.TestProvider)
-
-	prov1.On("Name").Return("prov1")
-	prov2.On("Name").Return("prov2")
-
-	// build a list
-	list := WithProviders(prov1, prov2)
-
-	returnedProv, err := list.Provider("prov1")
-
-	if assert.NoError(t, err) {
-		assert.Equal(t, returnedProv, prov1)
-	}
-
-	// check nonsense name
-	returnedProv, err = Provider("no such provider")
 
 	if assert.Nil(t, returnedProv) {
 		assert.IsType(t, &common.MissingProviderError{}, err, "MissingProviderError expected")

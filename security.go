@@ -1,10 +1,13 @@
 package gomniauth
 
-var SecurityKey string = ""
+import (
+	"github.com/stretchr/gomniauth/common"
+)
+
+func SetSecurityKey(key string) {
+	common.SetSecurityKey(key)
+}
 
 func GetSecurityKey() string {
-	if len(SecurityKey) == 0 {
-		panic("gomniauth: You must set SecurityKey to something secure.")
-	}
-	return SecurityKey
+	return common.GetSecurityKey()
 }
