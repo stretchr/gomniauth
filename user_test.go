@@ -5,6 +5,7 @@ import (
 	"github.com/stretchr/gomniauth/test"
 	"github.com/stretchr/stew/objects"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 	"testing"
 )
 
@@ -21,4 +22,7 @@ func TestAddProviderCredentials(t *testing.T) {
 	if assert.NotNil(t, user.Get(UserKeyProviderCredentials)) {
 		assert.Equal(t, creds, user.GetMap(UserKeyProviderCredentials).Get("provider-name"))
 	}
+
+	mock.AssertExpectationsForObjects(t, provider.Mock)
+
 }
