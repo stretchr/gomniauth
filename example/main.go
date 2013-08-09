@@ -1,9 +1,8 @@
 package main
 
 import (
-	"github.com/stretchr/gomniauth"
-	"github.com/stretchr/gomniauth/common"
 	"fmt"
+	"github.com/stretchr/gomniauth"
 	"github.com/stretchr/goweb"
 	"github.com/stretchr/goweb/context"
 	"log"
@@ -43,9 +42,20 @@ func main() {
 	*/
 	goweb.Map("auth/{provider}/login", func(ctx context.Context) error {
 
-		provider, providerErr := gomniauth.
+		provider, err := gomniauth.Provider(ctx.PathParam("provider"))
 
-		return nil
+		if err != nil {
+			return err
+		}
+
+		authUrl, err := provider.GetBeginAuthURL(nil)
+
+		if err != nil {
+			return err
+		}
+
+		// redirect
+		return goweb.Respond.WithRedirect(ctx, authUrl)
 
 	})
 
