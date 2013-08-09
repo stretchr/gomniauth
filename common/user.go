@@ -1,7 +1,6 @@
 package common
 
 type User interface {
-
 	// Email gets the users email address.
 	Email() string
 
@@ -22,5 +21,5 @@ type User interface {
 
 	// AddProviderCredentials adds the provider credentials to the
 	// ProviderCredentials for this User.
-	AddProviderCredentials(Provider, *Credentials)
+	AddProviderCredentials(Provider, *Credentials) error
 }

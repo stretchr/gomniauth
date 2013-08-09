@@ -17,6 +17,10 @@ func TestAddProviderCredentials(t *testing.T) {
 	provider.On("Name").Return("provider-name")
 
 	user := &User{objects.M()}
+	var userInterface common.User = user
+
+	assert.NotNil(t, userInterface)
+
 	user.AddProviderCredentials(provider, creds)
 
 	if assert.NotNil(t, user.Get(UserKeyProviderCredentials)) {
