@@ -1,7 +1,6 @@
-package providers
+package github
 
 import (
-	"github.com/stretchr/gomniauth"
 	"github.com/stretchr/gomniauth/common"
 	"github.com/stretchr/gomniauth/oauth2"
 	"github.com/stretchr/stew/objects"
@@ -16,18 +15,12 @@ const (
 	githubEndpointProfile string = "https://api.github.com/user"
 )
 
-var githubToGomniauthKeys = map[string]string{
-	"login":      common.UserKeyNickname,
-	"name":       common.UserKeyName,
-	"email":      common.UserKeyEmail,
-	"avatar_url": common.UserKeyAvatar}
-
 type GithubProvider struct {
 	config         *common.Config
 	tripperFactory common.TripperFactory
 }
 
-func Github(clientId, clientSecret, redirectUrl string) *GithubProvider {
+func New(clientId, clientSecret, redirectUrl string) *GithubProvider {
 
 	p := new(GithubProvider)
 	p.config = &common.Config{objects.M(
@@ -42,44 +35,44 @@ func Github(clientId, clientSecret, redirectUrl string) *GithubProvider {
 	return p
 }
 
-func (g *GithubProvider) TripperFactory() common.TripperFactory {
+func (provider *GithubProvider) TripperFactory() common.TripperFactory {
 
-	if g.tripperFactory == nil {
-		g.tripperFactory = new(oauth2.OAuth2TripperFactory)
+	if provider.tripperFactory == nil {
+		provider.tripperFactory = new(oauth2.OAuth2TripperFactory)
 	}
 
-	return g.tripperFactory
+	return provider.tripperFactory
 }
 
 // Name is the unique name for this provider.
-func (g *GithubProvider) Name() string {
+func (provider *GithubProvider) Name() string {
 	return githubName
 }
 
 // GetBeginAuthURL gets the URL that the client must visit in order
 // to begin the authentication process.
-func (g *GithubProvider) GetBeginAuthURL(state *common.State) (string, error) {
-	return oauth2.GetBeginAuthURLWithBase(g.config.GetString(oauth2.OAuth2KeyAuthURL), state, g.config)
+func (provider *GithubProvider) GetBeginAuthURL(state *common.State) (string, error) {
+	return oauth2.GetBeginAuthURLWithBase(provider.config.GetString(oauth2.OAuth2KeyAuthURL), state, provider.config)
 }
 
 // Get makes an authenticated request and returns the data in the
 // response as a data map.
-func (g *GithubProvider) Get(creds *common.Credentials, endpoint string) (objects.Map, error) {
-	return oauth2.Get(g, creds, endpoint)
+func (provider *GithubProvider) Get(creds *common.Credentials, endpoint string) (objects.Map, error) {
+	return oauth2.Get(provider, creds, endpoint)
 }
 
 // GetUser uses the specified common.Credentials to access the users profile
 // from the remote provider, and builds the appropriate User object.
-func (g *GithubProvider) GetUser(creds *common.Credentials) (common.User, error) {
+func (provider *GithubProvider) GetUser(creds *common.Credentials) (common.User, error) {
 
-	profileData, err := g.Get(creds, githubEndpointProfile)
+	profileData, err := provider.Get(creds, githubEndpointProfile)
 
 	if err != nil {
 		return nil, err
 	}
 
 	// build user
-	user := &gomniauth.User{profileData.TransformKeys(githubToGomniauthKeys)}
+	user := NewUser(profileData, creds, provider)
 
 	return user, nil
 }
@@ -87,10 +80,10 @@ func (g *GithubProvider) GetUser(creds *common.Credentials) (common.User, error)
 // CompleteAuth takes a map of arguments that are used to
 // complete the authorisation process, completes it, and returns
 // the appropriate Credentials.
-func (g *GithubProvider) CompleteAuth(data objects.Map) (*common.Credentials, error) {
-	return oauth2.CompleteAuth(g.TripperFactory(), data, g.config, g)
+func (provider *GithubProvider) CompleteAuth(data objects.Map) (*common.Credentials, error) {
+	return oauth2.CompleteAuth(provider.TripperFactory(), data, provider.config, provider)
 }
 
-func (g *GithubProvider) GetClient(creds *common.Credentials) (*http.Client, error) {
-	return oauth2.GetClient(g.TripperFactory(), creds, g)
+func (provider *GithubProvider) GetClient(creds *common.Credentials) (*http.Client, error) {
+	return oauth2.GetClient(provider.TripperFactory(), creds, provider)
 }

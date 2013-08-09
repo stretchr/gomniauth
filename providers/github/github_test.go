@@ -1,4 +1,4 @@
-package providers
+package github
 
 import (
 	"github.com/stretchr/gomniauth/common"
@@ -24,8 +24,8 @@ func TestGitHubImplementrsProvider(t *testing.T) {
 
 func TestGetUser(t *testing.T) {
 
-	g := Github("clientID", "secret", "http://myapp.com/")
-	creds := new(common.Credentials)
+	g := New("clientID", "secret", "http://myapp.com/")
+	creds := &common.Credentials{objects.M()}
 
 	testTripperFactory := new(test.TestTripperFactory)
 	testTripper := new(test.TestTripper)
@@ -48,7 +48,12 @@ func TestGetUser(t *testing.T) {
 		assert.Equal(t, user.Nickname(), "loginname")
 		assert.Equal(t, user.Email(), "email@address.com")
 		assert.Equal(t, user.AvatarURL(), "http://myface.com/")
-		assert.Equal(t, user.GetValue("blog"), "http://blog.com/")
+		assert.Equal(t, user.Data()["blog"], "http://blog.com/")
+
+		githubCreds := user.ProviderCredentials()[githubName]
+		if assert.NotNil(t, githubCreds) {
+			assert.Equal(t, "uniqueid", githubCreds.GetStringOrEmpty(common.CredentialsKeyID))
+		}
 
 	}
 
@@ -56,7 +61,7 @@ func TestGetUser(t *testing.T) {
 
 func TestNewGithub(t *testing.T) {
 
-	g := Github("clientID", "secret", "http://myapp.com/")
+	g := New("clientID", "secret", "http://myapp.com/")
 
 	if assert.NotNil(t, g) {
 
@@ -73,15 +78,13 @@ func TestNewGithub(t *testing.T) {
 
 		}
 
-		// check factory
-
 	}
 
 }
 
 func TestGithubTripperFactory(t *testing.T) {
 
-	g := Github("clientID", "secret", "http://myapp.com/")
+	g := New("clientID", "secret", "http://myapp.com/")
 	g.tripperFactory = nil
 
 	f := g.TripperFactory()
@@ -93,7 +96,7 @@ func TestGithubTripperFactory(t *testing.T) {
 }
 
 func TestGithubName(t *testing.T) {
-	g := Github("clientID", "secret", "http://myapp.com/")
+	g := New("clientID", "secret", "http://myapp.com/")
 	assert.Equal(t, githubName, g.Name())
 }
 
@@ -103,7 +106,7 @@ func TestGitHubGetBeginAuthURL(t *testing.T) {
 
 	state := &common.State{objects.M("after", "http://www.stretchr.com/")}
 
-	g := Github("clientID", "secret", "http://myapp.com/")
+	g := New("clientID", "secret", "http://myapp.com/")
 
 	url, err := g.GetBeginAuthURL(state)
 
