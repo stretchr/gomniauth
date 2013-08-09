@@ -1,10 +1,10 @@
 package common
 
+import (
+	"github.com/stretchr/stew/objects"
+)
+
 const (
-	UserKeyEmail               string = "UserKeyEmail"
-	UserKeyName                string = "UserKeyName"
-	UserKeyNickname            string = "UserKeyNickname"
-	UserKeyAvatar              string = "UserKeyAvatar"
 	UserKeyID                  string = "UserKeyID"
 	UserKeyProviderCredentials string = "UserKeyProviderCredentials"
 )
@@ -28,10 +28,6 @@ type User interface {
 	// ID gets this user's globally unique ID.
 	ID() string
 
-	// GetValue gets any User field by name.
-	GetValue(key string) interface{}
-
-	// AddProviderCredentials adds the provider credentials to the
-	// ProviderCredentials for this User.
-	AddProviderCredentials(Provider, *Credentials) error
+	// Data gets the underlying data that makes up this User.
+	Data() objects.Map
 }
