@@ -51,7 +51,7 @@ const (
 )
 
 type OAuth2Provider struct {
-	Provider
+	BaseProvider
 }
 
 func (p *OAuth2Provider) GetBeginAuthURLWithBase(base string, state *common.State, config *common.Config) (string, error) {

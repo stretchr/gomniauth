@@ -8,10 +8,10 @@ import (
 	"testing"
 )
 
-func TestProviderNewTripper(t *testing.T) {
+func TestBaseProviderNewTripper(t *testing.T) {
 
 	creds := new(common.Credentials)
-	provider := new(Provider)
+	provider := new(BaseProvider)
 
 	testTripperFactory := new(test.TestTripperFactory)
 	provider.TripperFactory = testTripperFactory
@@ -29,10 +29,10 @@ func TestProviderNewTripper(t *testing.T) {
 
 }
 
-func TestProviderSetTripperFactory(t *testing.T) {
+func TestBaseProviderSetTripperFactory(t *testing.T) {
 
 	testTripperFactory := new(test.TestTripperFactory)
-	provider := new(Provider)
+	provider := new(BaseProvider)
 
 	provider.SetTripperFactory(testTripperFactory)
 
@@ -40,9 +40,9 @@ func TestProviderSetTripperFactory(t *testing.T) {
 
 }
 
-func TestProviderGetClient(t *testing.T) {
+func TestBaseProviderGetClient(t *testing.T) {
 
-	g := new(Provider)
+	g := new(BaseProvider)
 
 	testTripperFactory := new(test.TestTripperFactory)
 	testTripper := new(test.TestTripper)

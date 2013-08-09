@@ -1,6 +1,8 @@
 package main
 
 import (
+	"github.com/stretchr/gomniauth"
+	"github.com/stretchr/gomniauth/common"
 	"fmt"
 	"github.com/stretchr/goweb"
 	"github.com/stretchr/goweb/context"
@@ -32,12 +34,16 @@ func respondWithError(ctx context.Context, errorMessage string) error {
 
 func main() {
 
+	gomniauth.WithProviders()
+
 	/*
 	   GET /auth/{provider}/login
 
 	   Redirects them to the fmtin page for the specified provider.
 	*/
 	goweb.Map("auth/{provider}/login", func(ctx context.Context) error {
+
+		provider, providerErr := gomniauth.
 
 		return nil
 

@@ -1,7 +1,7 @@
 package common
 
 const (
-	errorMessagePrefix string = "gomniauth: "
+	PrefixForErrors string = "gomniauth: "
 )
 
 /*
@@ -14,7 +14,7 @@ type MissingParameterError struct {
 }
 
 func (e *MissingParameterError) Error() string {
-	return errorMessagePrefix + "Parameter '" + e.ParameterName + "' is required but missing."
+	return PrefixForErrors + "Parameter '" + e.ParameterName + "' is required but missing."
 }
 
 /*
@@ -27,7 +27,7 @@ type AuthServerError struct {
 }
 
 func (e *AuthServerError) Error() string {
-	return errorMessagePrefix + "Auth server responded with error '" + e.ErrorMessage + "'."
+	return PrefixForErrors + "Auth server responded with error '" + e.ErrorMessage + "'."
 }
 
 /*
@@ -40,5 +40,5 @@ type MissingProviderError struct {
 }
 
 func (e *MissingProviderError) Error() string {
-	return errorMessagePrefix + "No provider with name '" + e.ProviderName + "' was found."
+	return PrefixForErrors + "No provider with name '" + e.ProviderName + "' was found."
 }
