@@ -36,6 +36,7 @@ func New(clientId, clientSecret, redirectUrl string) *GoogleProvider {
 	return p
 }
 
+// TipperFactory gets an OAuth2TripperFactory
 func (provider *GoogleProvider) TripperFactory() common.TripperFactory {
 
 	if provider.tripperFactory == nil {
@@ -85,6 +86,8 @@ func (provider *GoogleProvider) CompleteAuth(data objects.Map) (*common.Credenti
 	return oauth2.CompleteAuth(provider.TripperFactory(), data, provider.config, provider)
 }
 
+// GetClient returns an authenticated http.Client that can be used to make requests to
+// protected Google resources
 func (provider *GoogleProvider) GetClient(creds *common.Credentials) (*http.Client, error) {
 	return oauth2.GetClient(provider.TripperFactory(), creds, provider)
 }

@@ -4,8 +4,8 @@ import (
 	"github.com/stretchr/gomniauth/common"
 )
 
-// SharedProviderList keeps track of the last created ProviderList
-// useful for using shortcut methods directly on gomniauth package
+// SharedProviderList keeps track of the last created ProviderList.
+// It is useful for using shortcut methods directly on gomniauth package
 // rather than having to refer to the list.
 var SharedProviderList common.ProviderList
 

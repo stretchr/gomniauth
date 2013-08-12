@@ -7,6 +7,10 @@ import (
 	"io/ioutil"
 )
 
+// Get executes an authenticated HTTP GET against the given provider and returns an
+// objects.Map of the response.
+//
+// The response type is automatically detected and used to unmarshal the response.
 func Get(provider common.Provider, creds *common.Credentials, endpoint string) (objects.Map, error) {
 
 	client, clientErr := provider.GetClient(creds)

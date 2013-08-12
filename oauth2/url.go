@@ -5,6 +5,9 @@ import (
 	"github.com/stretchr/stew/objects"
 )
 
+// GetBeginAuthURLWithBase returns the OAuth2 authorization URL from the given arguments.
+//
+// The state object will be encoded to base64 and signed to ensure integrity.
 func GetBeginAuthURLWithBase(base string, state *common.State, config *common.Config) (string, error) {
 
 	if config == nil {

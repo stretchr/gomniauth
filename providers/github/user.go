@@ -17,6 +17,7 @@ type User struct {
 	data objects.Map
 }
 
+// NewUser builds a new User object for Github.
 func NewUser(data objects.Map, creds *common.Credentials, provider common.Provider) *User {
 	user := &User{data}
 

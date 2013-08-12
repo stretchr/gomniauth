@@ -15,6 +15,8 @@ const (
 	githubEndpointProfile string = "https://api.github.com/user"
 )
 
+// GithubProvider implements the Provider interface and provides Github
+// OAuth2 communication capabilities.
 type GithubProvider struct {
 	config         *common.Config
 	tripperFactory common.TripperFactory
@@ -35,6 +37,7 @@ func New(clientId, clientSecret, redirectUrl string) *GithubProvider {
 	return p
 }
 
+// TripperFactory gets an OAuth2TripperFactory
 func (provider *GithubProvider) TripperFactory() common.TripperFactory {
 
 	if provider.tripperFactory == nil {
@@ -84,6 +87,8 @@ func (provider *GithubProvider) CompleteAuth(data objects.Map) (*common.Credenti
 	return oauth2.CompleteAuth(provider.TripperFactory(), data, provider.config, provider)
 }
 
+// GetClient returns an authenticated http.Client that can be used to make requests to
+// protected Github resources
 func (provider *GithubProvider) GetClient(creds *common.Credentials) (*http.Client, error) {
 	return oauth2.GetClient(provider.TripperFactory(), creds, provider)
 }

@@ -11,11 +11,19 @@ type OAuth2Tripper struct {
 	provider            common.Provider
 }
 
+// NewOAuth2Tripper creates a new OAuth2Tripper with the given arguments.
 func NewOAuth2Tripper(creds *common.Credentials, provider common.Provider) *OAuth2Tripper {
 	return &OAuth2Tripper{http.DefaultTransport, creds, provider}
 }
 
+// RoundTrip is called by the http package when making a request to a server. This
+// implementation of RoundTrip inserts the appropriate authorization headers
+// into the request in order to enable access of protected resources.
+//
+// If the auth token has expired, RoundTrip will attempt to renew it.
 func (t *OAuth2Tripper) RoundTrip(req *http.Request) (*http.Response, error) {
+
+	//TODO: check token expiration and renew if necessary
 
 	if t.Credentials() != nil {
 
@@ -31,10 +39,12 @@ func (t *OAuth2Tripper) RoundTrip(req *http.Request) (*http.Response, error) {
 	return t.underlyingTransport.RoundTrip(req)
 }
 
+// Credentials returns the credentials associated with this OAuth2Tripper
 func (t *OAuth2Tripper) Credentials() *common.Credentials {
 	return t.credentials
 }
 
+// Provider returns the provider associated with this OAuth2Tripper
 func (t *OAuth2Tripper) Provider() common.Provider {
 	return t.provider
 }
