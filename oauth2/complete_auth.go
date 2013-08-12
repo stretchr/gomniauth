@@ -21,12 +21,17 @@ func CompleteAuth(tripperFactory common.TripperFactory, data objects.Map, config
 
 	// get the code
 	codeList := data.Get(OAuth2KeyCode)
-	if codeList == nil || len(codeList.([]string)) == 0 {
-		return nil, &common.MissingParameterError{OAuth2KeyCode}
-	}
-	code := codeList.([]string)[0]
-	if len(code) == 0 {
-		return nil, &common.MissingParameterError{OAuth2KeyCode}
+
+	code, ok := codeList.(string)
+	if !ok {
+
+		if codeList == nil || len(codeList.([]string)) == 0 {
+			return nil, &common.MissingParameterError{OAuth2KeyCode}
+		}
+		code = codeList.([]string)[0]
+		if len(code) == 0 {
+			return nil, &common.MissingParameterError{OAuth2KeyCode}
+		}
 	}
 
 	client, clientErr := GetClient(tripperFactory, common.EmptyCredentials, provider)
