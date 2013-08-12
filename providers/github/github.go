@@ -33,7 +33,8 @@ func New(clientId, clientSecret, redirectUrl string) *GithubProvider {
 		oauth2.OAuth2KeyRedirectUrl, redirectUrl,
 		oauth2.OAuth2KeyScope, githubDefaultScope,
 		oauth2.OAuth2KeyAccessType, oauth2.OAuth2AccessTypeOnline,
-		oauth2.OAuth2KeyApprovalPrompt, oauth2.OAuth2ApprovalPromptAuto)}
+		oauth2.OAuth2KeyApprovalPrompt, oauth2.OAuth2ApprovalPromptAuto,
+		oauth2.OAuth2KeyResponseType, oauth2.OAuth2KeyCode)}
 	return p
 }
 
