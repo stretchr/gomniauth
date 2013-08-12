@@ -14,6 +14,7 @@ const (
 	OAuth2KeyExpiresIn      string = "expires_in"
 	OAuth2KeyAccessToken    string = "access_token"
 	OAuth2KeyRefreshToken   string = "refresh_token"
+	OAuth2KeyResponseType   string = "response_type"
 )
 
 const (

@@ -17,7 +17,8 @@ func GetBeginAuthURLWithBase(base string, state *common.State, config *common.Co
 		OAuth2KeyRedirectUrl, config.GetStringOrEmpty(OAuth2KeyRedirectUrl),
 		OAuth2KeyScope, config.GetStringOrEmpty(OAuth2KeyScope),
 		OAuth2KeyAccessType, config.GetStringOrEmpty(OAuth2KeyAccessType),
-		OAuth2KeyApprovalPrompt, config.GetStringOrEmpty(OAuth2KeyApprovalPrompt))
+		OAuth2KeyApprovalPrompt, config.GetStringOrEmpty(OAuth2KeyApprovalPrompt),
+		OAuth2KeyResponseType, config.GetStringOrEmpty(OAuth2KeyResponseType))
 
 	// set the state
 	stateValue, stateErr := state.SignedBase64(common.GetSecurityKey())

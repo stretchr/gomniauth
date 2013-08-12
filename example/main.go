@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/stretchr/gomniauth"
 	"github.com/stretchr/gomniauth/providers/github"
+	"github.com/stretchr/gomniauth/providers/google"
 	"github.com/stretchr/goweb"
 	"github.com/stretchr/goweb/context"
 	"log"
@@ -39,7 +40,9 @@ func main() {
 	// setup the providers
 	gomniauth.SetSecurityKey("yLiCQYG7CAflDavqGH461IO0MHp7TEbpg6TwHBWdJzNwYod1i5ZTbrIF5bEoO3oP") // NOTE: DO NOT COPY THIS - MAKE YOR OWN!
 	gomniauth.WithProviders(
-		github.New("3d1e6ba69036e0624b61", "7e8938928d802e7582908a5eadaaaf22d64babf1", "http://localhost:8080/auth/github/callback"))
+		github.New("3d1e6ba69036e0624b61", "7e8938928d802e7582908a5eadaaaf22d64babf1", "http://localhost:8080/auth/github/callback"),
+		google.New("1051709296778.apps.googleusercontent.com", "7oZxBGwpCI3UgFMgCq80Kx94", "http://localhost:8080/auth/google/callback"),
+	)
 
 	/*
 	   GET /auth/{provider}/login
@@ -67,7 +70,7 @@ func main() {
 
 	})
 
-	goweb.Map("/auth/{provider}/callback", func(ctx context.Context) error {
+	goweb.Map("auth/{provider}/callback", func(ctx context.Context) error {
 
 		provider, err := gomniauth.Provider(ctx.PathValue("provider"))
 
