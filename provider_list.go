@@ -24,6 +24,12 @@ func WithProviders(providers ...common.Provider) *ProviderList {
 	return list
 }
 
+// Add adds a provider to this list.
+func (l *ProviderList) Add(provider common.Provider) *ProviderList {
+	l.providers = append(l.providers, provider)
+	return l
+}
+
 // Provider gets a provider by name, or returns a common.MissingProviderError
 // if no provider with that name is registered.
 func (l *ProviderList) Provider(name string) (common.Provider, error) {

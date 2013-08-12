@@ -81,3 +81,23 @@ func TestProviderListProvider(t *testing.T) {
 	mock.AssertExpectationsForObjects(t, prov1.Mock, prov2.Mock)
 
 }
+
+func TestAdd(t *testing.T) {
+
+	prov1 := new(test.TestProvider)
+	prov2 := new(test.TestProvider)
+	prov3 := new(test.TestProvider)
+
+	// build a list
+	list := WithProviders(prov1, prov2)
+
+	if assert.Equal(t, 2, len(list.providers)) {
+
+		// add prov3
+		assert.Equal(t, list, list.Add(prov3), "Add should chain")
+		assert.Equal(t, 3, len(list.providers), "Add should add the provider")
+		assert.Equal(t, prov3, list.providers[2])
+
+	}
+
+}
