@@ -18,8 +18,8 @@ func (p *TestProvider) Name() string {
 
 // GetBeginAuthURL gets the URL that the client must visit in order
 // to begin the authentication process.
-func (p *TestProvider) GetBeginAuthURL(state *common.State) (string, error) {
-	args := p.Called(state)
+func (p *TestProvider) GetBeginAuthURL(state *common.State, options objects.Map) (string, error) {
+	args := p.Called(state, options)
 	return args.String(0), args.Error(1)
 }
 

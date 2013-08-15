@@ -59,7 +59,11 @@ func main() {
 
 		state := gomniauth.NewState("after", "success")
 
-		authUrl, err := provider.GetBeginAuthURL(state)
+		// if you want to request additional scopes from the provider,
+		// pass them as login?scope=scope1,scope2
+		//options := objects.M("scope", ctx.QueryValue("scope"))
+
+		authUrl, err := provider.GetBeginAuthURL(state, nil)
 
 		if err != nil {
 			return err

@@ -107,7 +107,7 @@ func TestGitHubGetBeginAuthURL(t *testing.T) {
 
 	g := New("clientID", "secret", "http://myapp.com/")
 
-	url, err := g.GetBeginAuthURL(state)
+	url, err := g.GetBeginAuthURL(state, nil)
 
 	if assert.NoError(t, err) {
 		assert.Contains(t, url, "client_id=clientID")

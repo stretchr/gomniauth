@@ -13,7 +13,7 @@ type Provider interface {
 
 	// GetBeginAuthURL gets the URL that the client must visit in order
 	// to begin the authentication process.
-	GetBeginAuthURL(state *State) (string, error)
+	GetBeginAuthURL(state *State, options objects.Map) (string, error)
 
 	// CompleteAuth takes a map of arguments that are used to
 	// complete the authorisation process, completes it, and returns

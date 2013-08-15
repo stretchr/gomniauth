@@ -108,12 +108,26 @@ func TestGitHubGetBeginAuthURL(t *testing.T) {
 
 	g := New("clientID", "secret", "http://myapp.com/")
 
-	url, err := g.GetBeginAuthURL(state)
+	url, err := g.GetBeginAuthURL(state, nil)
 
 	if assert.NoError(t, err) {
 		assert.Contains(t, url, "client_id=clientID")
 		assert.Contains(t, url, "redirect_uri=http%3A%2F%2Fmyapp.com%2F")
 		assert.Contains(t, url, "scope="+githubDefaultScope)
+		assert.Contains(t, url, "access_type="+oauth2.OAuth2AccessTypeOnline)
+		assert.Contains(t, url, "approval_prompt="+oauth2.OAuth2ApprovalPromptAuto)
+	}
+
+	state = &common.State{objects.M("after", "http://www.stretchr.com/")}
+
+	g = New("clientID", "secret", "http://myapp.com/")
+
+	url, err = g.GetBeginAuthURL(state, objects.M(oauth2.OAuth2KeyScope, "avatar"))
+
+	if assert.NoError(t, err) {
+		assert.Contains(t, url, "client_id=clientID")
+		assert.Contains(t, url, "redirect_uri=http%3A%2F%2Fmyapp.com%2F")
+		assert.Contains(t, url, "scope=avatar+"+githubDefaultScope)
 		assert.Contains(t, url, "access_type="+oauth2.OAuth2AccessTypeOnline)
 		assert.Contains(t, url, "approval_prompt="+oauth2.OAuth2ApprovalPromptAuto)
 	}

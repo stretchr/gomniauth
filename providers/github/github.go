@@ -55,7 +55,11 @@ func (provider *GithubProvider) Name() string {
 
 // GetBeginAuthURL gets the URL that the client must visit in order
 // to begin the authentication process.
-func (provider *GithubProvider) GetBeginAuthURL(state *common.State) (string, error) {
+func (provider *GithubProvider) GetBeginAuthURL(state *common.State, options objects.Map) (string, error) {
+	if options != nil {
+		scope := oauth2.MergeScopes(options.GetStringOrEmpty(oauth2.OAuth2KeyScope), githubDefaultScope)
+		provider.config.Set(oauth2.OAuth2KeyScope, scope)
+	}
 	return oauth2.GetBeginAuthURLWithBase(provider.config.GetString(oauth2.OAuth2KeyAuthURL), state, provider.config)
 }
 
