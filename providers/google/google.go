@@ -53,11 +53,17 @@ func (provider *GoogleProvider) Name() string {
 
 // GetBeginAuthURL gets the URL that the client must visit in order
 // to begin the authentication process.
+//
+// The state argument contains anything you wish to have sent back to your
+// callback endpoint.
+// The options argument takes any options used to configure the auth request
+// sent to the provider. In the case of OAuth2, the options map can contain:
+//   1. A "scope" key providing the desired scope(s). It will be merged with the default scope.
 func (provider *GoogleProvider) GetBeginAuthURL(state *common.State, options objects.Map) (string, error) {
 	if options != nil {
-	scope := oauth2.MergeScopes(options.GetStringOrEmpty(oauth2.OAuth2KeyScope), googleDefaultScope)
-	provider.config.Set(oauth2.OAuth2KeyScope, scope)
-}
+		scope := oauth2.MergeScopes(options.GetStringOrEmpty(oauth2.OAuth2KeyScope), googleDefaultScope)
+		provider.config.Set(oauth2.OAuth2KeyScope, scope)
+	}
 
 	return oauth2.GetBeginAuthURLWithBase(provider.config.GetString(oauth2.OAuth2KeyAuthURL), state, provider.config)
 }

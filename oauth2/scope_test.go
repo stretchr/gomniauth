@@ -50,5 +50,8 @@ func TestOAuth2MergeScopes(t *testing.T) {
 	scope = MergeScopes("user", " email ", "avatar   ")
 	assert.Equal(t, scope, "user email avatar")
 
+	scope = MergeScopes("", "email")
+	assert.Equal(t, scope, "email")
+
 	scope = MergeScopes()
 }

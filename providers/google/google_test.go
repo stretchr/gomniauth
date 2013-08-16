@@ -44,7 +44,7 @@ func TestGetUser(t *testing.T) {
 	if assert.NoError(t, err) && assert.NotNil(t, user) {
 
 		assert.Equal(t, user.Name(), "their-name")
-		assert.Equal(t, user.ID(), "") // doesn't come from google
+		assert.Equal(t, user.AuthCode(), "") // doesn't come from google
 		assert.Equal(t, user.Email(), "email@address.com")
 		assert.Equal(t, user.AvatarURL(), "http://myface.com/")
 		assert.Equal(t, user.Data()["blog"], "http://blog.com/")

@@ -23,6 +23,6 @@ func MergeScopes(scopes ...string) string {
 		scopes[i] = ParseScope(scope)
 	}
 
-	return strings.Join(scopes, " ")
+	return strings.TrimSpace(strings.Join(scopes, " "))
 
 }

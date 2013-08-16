@@ -13,6 +13,11 @@ type Provider interface {
 
 	// GetBeginAuthURL gets the URL that the client must visit in order
 	// to begin the authentication process.
+	//
+	// The state argument contains anything you wish to have sent back to your
+	// callback endpoint.
+	// The options argument takes any options used to configure the auth request
+	// sent to the provider.
 	GetBeginAuthURL(state *State, options objects.Map) (string, error)
 
 	// CompleteAuth takes a map of arguments that are used to
