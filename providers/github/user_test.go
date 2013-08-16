@@ -61,8 +61,8 @@ func TestIDForProvider(t *testing.T) {
 	user.data = objects.M(
 		common.UserKeyProviderCredentials,
 		map[string]*common.Credentials{
-			"github": &common.Credentials{objects.M(common.UserKeyID, "githubid")},
-			"google": &common.Credentials{objects.M(common.UserKeyID, "googleid")}})
+			"github": &common.Credentials{objects.M(common.CredentialsKeyID, "githubid")},
+			"google": &common.Credentials{objects.M(common.CredentialsKeyID, "googleid")}})
 
 	assert.Equal(t, "githubid", user.IDForProvider("github"))
 	assert.Equal(t, "googleid", user.IDForProvider("google"))
