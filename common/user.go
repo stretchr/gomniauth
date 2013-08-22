@@ -5,8 +5,8 @@ import (
 )
 
 const (
-	UserKeyID                  string = "UserKeyID"
-	UserKeyProviderCredentials string = "UserKeyProviderCredentials"
+	UserKeyAuthCode            string = "authCode"
+	UserKeyProviderCredentials string = "creds"
 )
 
 type User interface {
