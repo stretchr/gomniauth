@@ -11,6 +11,10 @@ Authentication framework for Go applications.
   * Example web app to copy
   * Works beautifully with [Goweb](https://github.com/stretchr/goweb)
 
+## Documentation
+
+  * Jump right into the [API Documentation](http://godoc.org/github.com/stretchr/gomniauth)
+
 ## Get started
 
 Install Gomniauth by doing:
@@ -21,7 +25,7 @@ Check out the [example web app code](https://github.com/stretchr/gomniauth/blob/
 
 ## Contributing
 
-If you add a provider that others could also make use of, please send us a Pull Request and we'll add it to the repo.
+  * If you add a provider that others could also make use of, please send us a Pull Request and we'll add it to the repo.
 
 ## Implementing Gomniauth
 
