@@ -64,7 +64,7 @@ You can access a list of the providers you are supporting by calling the `gomnia
 
 ### Redirecting them to the login page
 
-Once a provider has been chosen, you must redirect them to be authenticated.  You can do this by using the `gomniauth.Provider` function, that will return a `Provider` by name.
+Once a provider has been chosen, you must redirect them to be authenticated.  You can do this by using the `gomniauth.Provider` function, that will return a [Provider](http://godoc.org/github.com/stretchr/gomniauth/common#Provider) by name.
 
 So if the user chooses to login using Github, you would do:
 
