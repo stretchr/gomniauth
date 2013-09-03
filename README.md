@@ -19,6 +19,10 @@ Install Gomniauth by doing:
 
 Check out the [example web app code](https://github.com/stretchr/gomniauth/blob/master/example/main.go) to see how to use Gomniauth using [Goweb](https://github.com/stretchr/goweb).
 
+## Contributing
+
+If you add a provider that others could also make use of, please send us a Pull Request and we'll add it to the repo.
+
 ## Implementing Gomniauth
 
 ### Set up Gomniauth
