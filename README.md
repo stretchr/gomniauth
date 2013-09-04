@@ -9,7 +9,7 @@ Authentication framework for Go applications.
   * [Multiple providers](https://github.com/stretchr/gomniauth/tree/master/providers)
   * Comes with Google and GitHub baked in
   * Easily extensible
-  * [Example web app](https://github.com/stretchr/gomniauth/blob/master/example/main.go) to copy
+  * [Example web app](https://github.com/stretchr/gomniauth/tree/master/example) to copy
   * Works beautifully with [Goweb](https://github.com/stretchr/goweb)
   * Fully [TDD](http://en.wikipedia.org/wiki/Test-driven_development)
 
@@ -23,7 +23,7 @@ Install Gomniauth by doing:
 
     go get github.com/stretchr/gomniauth
 
-Check out the [example web app code](https://github.com/stretchr/gomniauth/blob/master/example/main.go) to see how to use Gomniauth using [Goweb](https://github.com/stretchr/goweb).
+Check out the [example web app code](https://github.com/stretchr/gomniauth/tree/master/example) to see how to use Gomniauth using [Goweb](https://github.com/stretchr/goweb).
 
 ## Contributing
 
@@ -50,7 +50,7 @@ A provider represents an authentication service that will be available to your u
 
 The callback should be an absolute URL to your application and should include the provider name in some way.
 
-For example, in the [example web app](https://github.com/stretchr/gomniauth/blob/master/example/main.go) we used the following format for callbacks:
+For example, in the [example web app](https://github.com/stretchr/gomniauth/tree/master/example) we used the following format for callbacks:
 
     http://mydomain.com/auth/{provider}/callback
 
