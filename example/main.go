@@ -146,10 +146,10 @@ func main() {
 		log.Fatalf("Could not listen: %s", listenErr)
 	}
 
-	fmt.Println("\n")
-	fmt.Println("Try some of these routes:\n")
+	fmt.Printf("\n")
+	fmt.Printf("Try some of these routes:\n")
 	fmt.Printf("%s", goweb.DefaultHttpHandler())
-	fmt.Println("\n\n")
+	fmt.Printf("\n\n")
 
 	go func() {
 		for _ = range c {

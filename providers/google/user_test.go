@@ -28,7 +28,7 @@ func TestNewUser(t *testing.T) {
 		googleKeyName, "Mathew",
 		googleKeyEmail, "my@email.com",
 		googleKeyAvatarUrl, "http://myface.com/")
-	creds := &common.Credentials{objects.M(oauth2.OAuth2KeyAccessToken, "ABC123")}
+	creds := &common.Credentials{Map: objects.M(oauth2.OAuth2KeyAccessToken, "ABC123")}
 
 	user := NewUser(data, creds, testProvider)
 
@@ -59,8 +59,8 @@ func TestIDForProvider(t *testing.T) {
 	user.data = objects.M(
 		common.UserKeyProviderCredentials,
 		map[string]*common.Credentials{
-			"github": &common.Credentials{objects.M(common.CredentialsKeyID, "githubid")},
-			"google": &common.Credentials{objects.M(common.CredentialsKeyID, "googleid")}})
+			"github": &common.Credentials{Map: objects.M(common.CredentialsKeyID, "githubid")},
+			"google": &common.Credentials{Map: objects.M(common.CredentialsKeyID, "googleid")}})
 
 	assert.Equal(t, "githubid", user.IDForProvider("github"))
 	assert.Equal(t, "googleid", user.IDForProvider("google"))

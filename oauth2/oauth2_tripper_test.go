@@ -14,7 +14,7 @@ import (
 func TestNewOAuth2Tripper(t *testing.T) {
 
 	testProvider := new(test.TestProvider)
-	creds := &common.Credentials{objects.M()}
+	creds := &common.Credentials{Map: objects.M()}
 	var tripper common.Tripper = NewOAuth2Tripper(creds, testProvider)
 
 	if assert.NotNil(t, tripper) {
@@ -29,7 +29,7 @@ func TestRoundTrip(t *testing.T) {
 
 	underlyingTripper := new(testifyhttp.TestRoundTripper)
 	testProvider := new(test.TestProvider)
-	creds := &common.Credentials{objects.M()}
+	creds := &common.Credentials{Map: objects.M()}
 	creds.Set(OAuth2KeyAccessToken, "This is a real access token :)")
 
 	tripper := new(OAuth2Tripper)

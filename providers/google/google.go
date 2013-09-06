@@ -23,7 +23,7 @@ type GoogleProvider struct {
 func New(clientId, clientSecret, redirectUrl string) *GoogleProvider {
 
 	p := new(GoogleProvider)
-	p.config = &common.Config{objects.M(
+	p.config = &common.Config{Map: objects.M(
 		oauth2.OAuth2KeyAuthURL, googleAuthURL,
 		oauth2.OAuth2KeyTokenURL, googleTokenURL,
 		oauth2.OAuth2KeyClientID, clientId,

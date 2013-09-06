@@ -25,7 +25,7 @@ func TestGitHubImplementrsProvider(t *testing.T) {
 func TestGetUser(t *testing.T) {
 
 	g := New("clientID", "secret", "http://myapp.com/")
-	creds := &common.Credentials{objects.M()}
+	creds := &common.Credentials{Map: objects.M()}
 
 	testTripperFactory := new(test.TestTripperFactory)
 	testTripper := new(test.TestTripper)
@@ -103,7 +103,7 @@ func TestGitHubGetBeginAuthURL(t *testing.T) {
 
 	common.SetSecurityKey("ABC123")
 
-	state := &common.State{objects.M("after", "http://www.stretchr.com/")}
+	state := &common.State{Map: objects.M("after", "http://www.stretchr.com/")}
 
 	g := New("clientID", "secret", "http://myapp.com/")
 

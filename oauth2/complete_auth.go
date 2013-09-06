@@ -26,11 +26,11 @@ func CompleteAuth(tripperFactory common.TripperFactory, data objects.Map, config
 	if !ok {
 
 		if codeList == nil || len(codeList.([]string)) == 0 {
-			return nil, &common.MissingParameterError{OAuth2KeyCode}
+			return nil, &common.MissingParameterError{ParameterName: OAuth2KeyCode}
 		}
 		code = codeList.([]string)[0]
 		if len(code) == 0 {
-			return nil, &common.MissingParameterError{OAuth2KeyCode}
+			return nil, &common.MissingParameterError{ParameterName: OAuth2KeyCode}
 		}
 	}
 
@@ -62,7 +62,7 @@ func CompleteAuth(tripperFactory common.TripperFactory, data objects.Map, config
 
 	// make sure we have an OK response
 	if response.StatusCode != http.StatusOK {
-		return nil, &common.AuthServerError{fmt.Sprintf("Server replied with %s.", response.Status)}
+		return nil, &common.AuthServerError{ErrorMessage: fmt.Sprintf("Server replied with %s.", response.Status)}
 	}
 
 	content, _, mimeTypeErr := mime.ParseMediaType(response.Header.Get("Content-Type"))
@@ -72,7 +72,7 @@ func CompleteAuth(tripperFactory common.TripperFactory, data objects.Map, config
 	}
 
 	// prepare the credentials object
-	creds := &common.Credentials{objects.M()}
+	creds := &common.Credentials{Map: objects.M()}
 
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
@@ -89,7 +89,7 @@ func CompleteAuth(tripperFactory common.TripperFactory, data objects.Map, config
 
 		// did an error occur?
 		if len(vals.GetStringOrEmpty("error")) > 0 {
-			return nil, &common.AuthServerError{vals.GetStringOrEmpty("error")}
+			return nil, &common.AuthServerError{ErrorMessage: vals.GetStringOrEmpty("error")}
 		}
 
 		expiresIn, _ := time.ParseDuration(vals.GetStringOrEmpty(OAuth2KeyExpiresIn) + "s")

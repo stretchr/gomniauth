@@ -16,7 +16,7 @@ import (
 func TestOAuth2Provider_CompleteAuth_URLEncodedResponse(t *testing.T) {
 
 	config := &common.Config{
-		objects.M(
+		Map: objects.M(
 			OAuth2KeyRedirectUrl, OAuth2KeyRedirectUrl,
 			OAuth2KeyScope, OAuth2KeyScope,
 			OAuth2KeyClientID, OAuth2KeyClientID,
@@ -59,7 +59,7 @@ func TestOAuth2Provider_CompleteAuth_URLEncodedResponse(t *testing.T) {
 func TestOAuth2Provider_Non200Response(t *testing.T) {
 
 	config := &common.Config{
-		objects.M(
+		Map: objects.M(
 			OAuth2KeyRedirectUrl, OAuth2KeyRedirectUrl,
 			OAuth2KeyScope, OAuth2KeyScope,
 			OAuth2KeyClientID, OAuth2KeyClientID,
@@ -94,7 +94,7 @@ func TestOAuth2Provider_Non200Response(t *testing.T) {
 func TestOAuth2Provider_CompleteAuth_JSON(t *testing.T) {
 
 	config := &common.Config{
-		objects.M(
+		Map: objects.M(
 			OAuth2KeyRedirectUrl, OAuth2KeyRedirectUrl,
 			OAuth2KeyScope, OAuth2KeyScope,
 			OAuth2KeyClientID, OAuth2KeyClientID,

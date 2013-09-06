@@ -45,7 +45,7 @@ func (l *ProviderList) Provider(name string) (common.Provider, error) {
 		}
 	}
 
-	return nil, &common.MissingProviderError{name}
+	return nil, &common.MissingProviderError{ProviderName: name}
 }
 
 // Providers gets all registered Provider objects.

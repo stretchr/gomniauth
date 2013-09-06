@@ -25,7 +25,7 @@ type GithubProvider struct {
 func New(clientId, clientSecret, redirectUrl string) *GithubProvider {
 
 	p := new(GithubProvider)
-	p.config = &common.Config{objects.M(
+	p.config = &common.Config{Map: objects.M(
 		oauth2.OAuth2KeyAuthURL, githubAuthURL,
 		oauth2.OAuth2KeyTokenURL, githubTokenURL,
 		oauth2.OAuth2KeyClientID, clientId,

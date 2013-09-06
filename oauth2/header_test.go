@@ -9,7 +9,7 @@ import (
 
 func TestAuthorizationHeader(t *testing.T) {
 
-	creds := &common.Credentials{objects.M()}
+	creds := &common.Credentials{Map: objects.M()}
 	accessTokenVal := "ACCESSTOKEN"
 	creds.Set(OAuth2KeyAccessToken, accessTokenVal)
 	k, v := AuthorizationHeader(creds)

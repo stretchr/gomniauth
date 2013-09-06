@@ -28,5 +28,5 @@ func StateFromParam(paramValue string) (*common.State, error) {
 		return nil, err
 	}
 
-	return &common.State{stateMap}, nil
+	return &common.State{Map: stateMap}, nil
 }
