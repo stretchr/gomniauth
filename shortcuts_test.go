@@ -12,8 +12,8 @@ func TestNewState(t *testing.T) {
 
 	s := NewState("one", 1, "two", 2)
 	if assert.NotNil(t, s) {
-		assert.Equal(t, 1, s.Get("one"))
-		assert.Equal(t, 2, s.Get("two"))
+		assert.Equal(t, 1, s.Get("one").Data())
+		assert.Equal(t, 2, s.Get("two").Data())
 	}
 
 }
@@ -25,8 +25,8 @@ func TestStateFromParam(t *testing.T) {
 
 	s, err := StateFromParam(hash)
 	if assert.NotNil(t, s) && assert.NoError(t, err) {
-		assert.Equal(t, "Mat", s.Get("name"))
-		assert.Equal(t, 30, s.Get("age"))
+		assert.Equal(t, "Mat", s.Get("name").Data())
+		assert.Equal(t, 30, s.Get("age").Data())
 	}
 
 }

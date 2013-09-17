@@ -5,7 +5,7 @@ Authentication framework for Go applications.
 ## Features
 
   * OAuth2 today
-  * Supports other protocols too 
+  * Supports other protocols too
   * [Multiple providers](https://github.com/stretchr/gomniauth/tree/master/providers)
   * Comes with Google and GitHub baked in
   * Easily extensible
@@ -37,8 +37,8 @@ First and only once for your application, you need to setup the security key and
 
 You are free to use the [signature package's RandomKey function](http://godoc.org/github.com/stretchr/signature#RandomKey) to generate a unique code every time your application starts.
 
-    gomniauth.SetSecurityKey(signature.RandomKey(64)) 
-       
+    gomniauth.SetSecurityKey(signature.RandomKey(64))
+
 A provider represents an authentication service that will be available to your users.  Usually, you'll have to add some configuration of your own, such as your application `key` and `secret` (provided by the auth service), and the `callback` into your app where users will be sent following successful (or not) authentication.
 
     gomniauth.WithProviders(
@@ -82,7 +82,7 @@ You should then redirect the user to the `authUrl`.
 
 The `state` parameter is a `State` object that contains information that will be hashed and passed (via the third party) through to your callback (see below).  Usually, this object contains the URL to redirect to once authentication has completed, but you can store whatever you like in here.
 
-The `options` parameter is an `objects.Map` containing additional query-string parameters that will be sent to the authentication service.  For example, in OAuth2 implementations, you can specify a `scope` parameter to get additional access to other services you might need.
+The `options` parameter is an `objx.Map` containing additional query-string parameters that will be sent to the authentication service.  For example, in OAuth2 implementations, you can specify a `scope` parameter to get additional access to other services you might need.
 
 ### Handling the callback
 
@@ -107,7 +107,7 @@ The provider will then do the work in the background to complete the authenticat
 
 If you then want some information about the user who just authenticated, you can call the `GetUser` method on the provider (passing in the `creds` from the `CompleteAuth` method.)
 
-The [User](https://github.com/stretchr/gomniauth/blob/master/common/user.go) you get back will give you access to the common user data you will need (like name, email, avatar URL etc) and also an `objects.Map` of `Data()` that contains everything else.
+The [User](https://github.com/stretchr/gomniauth/blob/master/common/user.go) you get back will give you access to the common user data you will need (like name, email, avatar URL etc) and also an `objx.Map` of `Data()` that contains everything else.
 
 ### Caching in
 

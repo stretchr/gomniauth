@@ -2,7 +2,7 @@ package test
 
 import (
 	"github.com/stretchr/gomniauth/common"
-	"github.com/stretchr/stew/objects"
+	"github.com/stretchr/objx"
 	"github.com/stretchr/testify/mock"
 	"net/http"
 )
@@ -18,7 +18,7 @@ func (p *TestProvider) Name() string {
 
 // GetBeginAuthURL gets the URL that the client must visit in order
 // to begin the authentication process.
-func (p *TestProvider) GetBeginAuthURL(state *common.State, options objects.Map) (string, error) {
+func (p *TestProvider) GetBeginAuthURL(state *common.State, options objx.Map) (string, error) {
 	args := p.Called(state, options)
 	return args.String(0), args.Error(1)
 }
@@ -26,14 +26,14 @@ func (p *TestProvider) GetBeginAuthURL(state *common.State, options objects.Map)
 // CompleteAuth takes a map of arguments that are used to
 // complete the authorisation process, completes it, and returns
 // the appropriate common.Credentials.
-func (p *TestProvider) CompleteAuth(data objects.Map) (*common.Credentials, error) {
+func (p *TestProvider) CompleteAuth(data objx.Map) (*common.Credentials, error) {
 	args := p.Called(data)
 	return args.Get(0).(*common.Credentials), args.Error(1)
 }
 
-func (p *TestProvider) Get(creds *common.Credentials, endpoint string) (objects.Map, error) {
+func (p *TestProvider) Get(creds *common.Credentials, endpoint string) (objx.Map, error) {
 	args := p.Called(creds, endpoint)
-	return args.Get(0).(objects.Map), args.Error(1)
+	return args.Get(0).(objx.Map), args.Error(1)
 }
 
 // GetUser uses the specified common.Credentials to access the users profile

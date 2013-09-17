@@ -4,7 +4,7 @@ import (
 	"github.com/stretchr/gomniauth/common"
 	"github.com/stretchr/gomniauth/oauth2"
 	"github.com/stretchr/gomniauth/test"
-	"github.com/stretchr/stew/objects"
+	"github.com/stretchr/objx"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"io/ioutil"
@@ -25,7 +25,7 @@ func TestGitHubImplementrsProvider(t *testing.T) {
 func TestGetUser(t *testing.T) {
 
 	g := New("clientID", "secret", "http://myapp.com/")
-	creds := &common.Credentials{Map: objects.M()}
+	creds := &common.Credentials{Map: objx.MSI()}
 
 	testTripperFactory := new(test.TestTripperFactory)
 	testTripper := new(test.TestTripper)
@@ -51,7 +51,7 @@ func TestGetUser(t *testing.T) {
 
 		googleCreds := user.ProviderCredentials()[googleName]
 		if assert.NotNil(t, googleCreds) {
-			assert.Equal(t, "uniqueid", googleCreds.GetStringOrEmpty(common.CredentialsKeyID))
+			assert.Equal(t, "uniqueid", googleCreds.Get(common.CredentialsKeyID).Str())
 		}
 
 	}
@@ -67,13 +67,13 @@ func TestNewGoogle(t *testing.T) {
 		// check config
 		if assert.NotNil(t, g.config) {
 
-			assert.Equal(t, "clientID", g.config.Get(oauth2.OAuth2KeyClientID))
-			assert.Equal(t, "secret", g.config.Get(oauth2.OAuth2KeySecret))
-			assert.Equal(t, "http://myapp.com/", g.config.Get(oauth2.OAuth2KeyRedirectUrl))
-			assert.Equal(t, googleDefaultScope, g.config.Get(oauth2.OAuth2KeyScope))
+			assert.Equal(t, "clientID", g.config.Get(oauth2.OAuth2KeyClientID).Data())
+			assert.Equal(t, "secret", g.config.Get(oauth2.OAuth2KeySecret).Data())
+			assert.Equal(t, "http://myapp.com/", g.config.Get(oauth2.OAuth2KeyRedirectUrl).Data())
+			assert.Equal(t, googleDefaultScope, g.config.Get(oauth2.OAuth2KeyScope).Data())
 
-			assert.Equal(t, googleAuthURL, g.config.Get(oauth2.OAuth2KeyAuthURL))
-			assert.Equal(t, googleTokenURL, g.config.Get(oauth2.OAuth2KeyTokenURL))
+			assert.Equal(t, googleAuthURL, g.config.Get(oauth2.OAuth2KeyAuthURL).Data())
+			assert.Equal(t, googleTokenURL, g.config.Get(oauth2.OAuth2KeyTokenURL).Data())
 
 		}
 
@@ -103,7 +103,7 @@ func TestGitHubGetBeginAuthURL(t *testing.T) {
 
 	common.SetSecurityKey("ABC123")
 
-	state := &common.State{Map: objects.M("after", "http://www.stretchr.com/")}
+	state := &common.State{Map: objx.MSI("after", "http://www.stretchr.com/")}
 
 	g := New("clientID", "secret", "http://myapp.com/")
 

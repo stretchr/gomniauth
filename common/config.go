@@ -1,11 +1,11 @@
 package common
 
 import (
-	"github.com/stretchr/stew/objects"
+	"github.com/stretchr/objx"
 )
 
 // Config represent data that describes information needed
 // to make authenticated requests.
 type Config struct {
-	objects.Map
+	objx.Map
 }

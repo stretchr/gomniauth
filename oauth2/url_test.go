@@ -2,7 +2,7 @@ package oauth2
 
 import (
 	"github.com/stretchr/gomniauth/common"
-	"github.com/stretchr/stew/objects"
+	"github.com/stretchr/objx"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -13,7 +13,7 @@ func TestOAuth2HandlerBeginAuthURLWithBase(t *testing.T) {
 
 	base := "https://base.url/auth"
 
-	config := &common.Config{Map: objects.M()}
+	config := &common.Config{Map: objx.MSI()}
 	config.
 		Set("client_id", "client_id").
 		Set("redirect_uri", "redirect_uri").
@@ -21,7 +21,7 @@ func TestOAuth2HandlerBeginAuthURLWithBase(t *testing.T) {
 		Set("access_type", "access_type").
 		Set("approval_prompt", "approval_prompt")
 
-	state := &common.State{Map: objects.M("after", "http://www.stretchr.com/")}
+	state := &common.State{Map: objx.MSI("after", "http://www.stretchr.com/")}
 	base64State, _ := state.Base64()
 
 	url, err := GetBeginAuthURLWithBase(base, state, config)
@@ -43,7 +43,7 @@ func TestOAuth2HandlerBeginAuthURLWithBaseMultipleScope(t *testing.T) {
 
 	base := "https://base.url/auth"
 
-	config := &common.Config{Map: objects.M()}
+	config := &common.Config{Map: objx.MSI()}
 	config.
 		Set("client_id", "client_id").
 		Set("redirect_uri", "redirect_uri").
@@ -51,7 +51,7 @@ func TestOAuth2HandlerBeginAuthURLWithBaseMultipleScope(t *testing.T) {
 		Set("access_type", "access_type").
 		Set("approval_prompt", "approval_prompt")
 
-	state := &common.State{Map: objects.M("after", "http://www.stretchr.com/")}
+	state := &common.State{Map: objx.MSI("after", "http://www.stretchr.com/")}
 	base64State, _ := state.Base64()
 
 	url, err := GetBeginAuthURLWithBase(base, state, config)

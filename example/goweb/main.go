@@ -61,7 +61,7 @@ func main() {
 
 		// if you want to request additional scopes from the provider,
 		// pass them as login?scope=scope1,scope2
-		//options := objects.M("scope", ctx.QueryValue("scope"))
+		//options := objx.MSI("scope", ctx.QueryValue("scope"))
 
 		authUrl, err := provider.GetBeginAuthURL(state, nil)
 

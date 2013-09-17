@@ -1,7 +1,7 @@
 package common
 
 import (
-	"github.com/stretchr/stew/objects"
+	"github.com/stretchr/objx"
 )
 
 const (
@@ -33,5 +33,5 @@ type User interface {
 	AuthCode() string
 
 	// Data gets the underlying data that makes up this User.
-	Data() objects.Map
+	Data() objx.Map
 }

@@ -2,7 +2,7 @@ package test
 
 import (
 	"github.com/stretchr/gomniauth/common"
-	"github.com/stretchr/stew/objects"
+	"github.com/stretchr/objx"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -47,6 +47,6 @@ func (u *TestUser) AuthCode() string {
 }
 
 // Data gets the underlying data that makes up this User.
-func (u *TestUser) Data() objects.Map {
-	return u.Called().Get(0).(objects.Map)
+func (u *TestUser) Data() objx.Map {
+	return u.Called().Get(0).(objx.Map)
 }

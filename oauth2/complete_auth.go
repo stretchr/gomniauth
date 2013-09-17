@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/stretchr/gomniauth/common"
-	"github.com/stretchr/stew/objects"
+	"github.com/stretchr/objx"
 	"io/ioutil"
 	"mime"
 	"net/http"
@@ -17,10 +17,10 @@ import (
 //
 // The data must contain an OAuth2KeyCode obtained from the auth
 // server.
-func CompleteAuth(tripperFactory common.TripperFactory, data objects.Map, config *common.Config, provider common.Provider) (*common.Credentials, error) {
+func CompleteAuth(tripperFactory common.TripperFactory, data objx.Map, config *common.Config, provider common.Provider) (*common.Credentials, error) {
 
 	// get the code
-	codeList := data.Get(OAuth2KeyCode)
+	codeList := data.Get(OAuth2KeyCode).Data()
 
 	code, ok := codeList.(string)
 	if !ok {
@@ -39,15 +39,15 @@ func CompleteAuth(tripperFactory common.TripperFactory, data objects.Map, config
 		return nil, clientErr
 	}
 
-	params := objects.M(OAuth2KeyGrantType, OAuth2GrantTypeAuthorizationCode,
-		OAuth2KeyRedirectUrl, config.GetStringOrEmpty(OAuth2KeyRedirectUrl),
-		OAuth2KeyScope, config.GetStringOrEmpty(OAuth2KeyScope),
+	params := objx.MSI(OAuth2KeyGrantType, OAuth2GrantTypeAuthorizationCode,
+		OAuth2KeyRedirectUrl, config.Get(OAuth2KeyRedirectUrl).Str(),
+		OAuth2KeyScope, config.Get(OAuth2KeyScope).Str(),
 		OAuth2KeyCode, code,
-		OAuth2KeyClientID, config.GetStringOrEmpty(OAuth2KeyClientID),
-		OAuth2KeySecret, config.GetStringOrEmpty(OAuth2KeySecret))
+		OAuth2KeyClientID, config.Get(OAuth2KeyClientID).Str(),
+		OAuth2KeySecret, config.Get(OAuth2KeySecret).Str())
 
 	// post the form
-	response, requestErr := client.PostForm(config.GetString(OAuth2KeyTokenURL), params.URLValues())
+	response, requestErr := client.PostForm(config.Get(OAuth2KeyTokenURL).Str(), params.URLValues())
 
 	if requestErr != nil {
 		return nil, requestErr
@@ -72,7 +72,7 @@ func CompleteAuth(tripperFactory common.TripperFactory, data objects.Map, config
 	}
 
 	// prepare the credentials object
-	creds := &common.Credentials{Map: objects.M()}
+	creds := &common.Credentials{Map: objx.MSI()}
 
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
@@ -82,25 +82,25 @@ func CompleteAuth(tripperFactory common.TripperFactory, data objects.Map, config
 	switch content {
 	case "application/x-www-form-urlencoded", "text/plain":
 
-		vals, err := objects.NewMapFromURLQuery(string(body))
+		vals, err := objx.FromURLQuery(string(body))
 		if err != nil {
 			return nil, err
 		}
 
 		// did an error occur?
-		if len(vals.GetStringOrEmpty("error")) > 0 {
-			return nil, &common.AuthServerError{ErrorMessage: vals.GetStringOrEmpty("error")}
+		if len(vals.Get("error").Str()) > 0 {
+			return nil, &common.AuthServerError{ErrorMessage: vals.Get("error").Str()}
 		}
 
-		expiresIn, _ := time.ParseDuration(vals.GetStringOrEmpty(OAuth2KeyExpiresIn) + "s")
+		expiresIn, _ := time.ParseDuration(vals.Get(OAuth2KeyExpiresIn).Str() + "s")
 
-		creds.Set(OAuth2KeyAccessToken, vals.GetStringOrEmpty(OAuth2KeyAccessToken))
-		creds.Set(OAuth2KeyRefreshToken, vals.GetStringOrEmpty(OAuth2KeyRefreshToken))
+		creds.Set(OAuth2KeyAccessToken, vals.Get(OAuth2KeyAccessToken).Str())
+		creds.Set(OAuth2KeyRefreshToken, vals.Get(OAuth2KeyRefreshToken).Str())
 		creds.Set(OAuth2KeyExpiresIn, expiresIn)
 
 	default: // use JSON
 
-		var data objects.Map
+		var data objx.Map
 
 		jsonErr := json.Unmarshal(body, &data)
 
@@ -109,7 +109,7 @@ func CompleteAuth(tripperFactory common.TripperFactory, data objects.Map, config
 		}
 
 		// handle the time
-		timeDuration := data.Get(OAuth2KeyExpiresIn).(float64)
+		timeDuration := data.Get(OAuth2KeyExpiresIn).Float64()
 		data.Set(OAuth2KeyExpiresIn, time.Duration(timeDuration)*time.Second)
 
 		// merge this data into the creds

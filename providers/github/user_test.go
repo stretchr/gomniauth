@@ -4,7 +4,7 @@ import (
 	"github.com/stretchr/gomniauth/common"
 	"github.com/stretchr/gomniauth/oauth2"
 	"github.com/stretchr/gomniauth/test"
-	"github.com/stretchr/stew/objects"
+	"github.com/stretchr/objx"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"testing"
@@ -23,13 +23,13 @@ func TestNewUser(t *testing.T) {
 	testProvider := new(test.TestProvider)
 	testProvider.On("Name").Return("providerName")
 
-	data := objects.M(
+	data := objx.MSI(
 		githubKeyID, "123435467890",
 		githubKeyName, "Mathew",
 		githubKeyEmail, "my@email.com",
 		githubKeyNickname, "Mat",
 		githubKeyAvatarUrl, "http://myface.com/")
-	creds := &common.Credentials{Map: objects.M(oauth2.OAuth2KeyAccessToken, "ABC123")}
+	creds := &common.Credentials{Map: objx.MSI(oauth2.OAuth2KeyAccessToken, "ABC123")}
 
 	user := NewUser(data, creds, testProvider)
 
@@ -45,8 +45,8 @@ func TestNewUser(t *testing.T) {
 		// check provider credentials
 		creds := user.ProviderCredentials()[testProvider.Name()]
 		if assert.NotNil(t, creds) {
-			assert.Equal(t, "ABC123", creds.GetStringOrEmpty(oauth2.OAuth2KeyAccessToken))
-			assert.Equal(t, "123435467890", creds.GetStringOrEmpty(common.CredentialsKeyID))
+			assert.Equal(t, "ABC123", creds.Get(oauth2.OAuth2KeyAccessToken).Str())
+			assert.Equal(t, "123435467890", creds.Get(common.CredentialsKeyID).Str())
 		}
 
 	}
@@ -58,11 +58,11 @@ func TestNewUser(t *testing.T) {
 func TestIDForProvider(t *testing.T) {
 
 	user := new(User)
-	user.data = objects.M(
+	user.data = objx.MSI(
 		common.UserKeyProviderCredentials,
 		map[string]*common.Credentials{
-			"github": &common.Credentials{Map: objects.M(common.CredentialsKeyID, "githubid")},
-			"google": &common.Credentials{Map: objects.M(common.CredentialsKeyID, "googleid")}})
+			"github": &common.Credentials{Map: objx.MSI(common.CredentialsKeyID, "githubid")},
+			"google": &common.Credentials{Map: objx.MSI(common.CredentialsKeyID, "googleid")}})
 
 	assert.Equal(t, "githubid", user.IDForProvider("github"))
 	assert.Equal(t, "googleid", user.IDForProvider("google"))

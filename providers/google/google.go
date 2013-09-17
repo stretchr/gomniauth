@@ -3,7 +3,7 @@ package google
 import (
 	"github.com/stretchr/gomniauth/common"
 	"github.com/stretchr/gomniauth/oauth2"
-	"github.com/stretchr/stew/objects"
+	"github.com/stretchr/objx"
 	"net/http"
 )
 
@@ -23,7 +23,7 @@ type GoogleProvider struct {
 func New(clientId, clientSecret, redirectUrl string) *GoogleProvider {
 
 	p := new(GoogleProvider)
-	p.config = &common.Config{Map: objects.M(
+	p.config = &common.Config{Map: objx.MSI(
 		oauth2.OAuth2KeyAuthURL, googleAuthURL,
 		oauth2.OAuth2KeyTokenURL, googleTokenURL,
 		oauth2.OAuth2KeyClientID, clientId,
@@ -59,18 +59,18 @@ func (provider *GoogleProvider) Name() string {
 // The options argument takes any options used to configure the auth request
 // sent to the provider. In the case of OAuth2, the options map can contain:
 //   1. A "scope" key providing the desired scope(s). It will be merged with the default scope.
-func (provider *GoogleProvider) GetBeginAuthURL(state *common.State, options objects.Map) (string, error) {
+func (provider *GoogleProvider) GetBeginAuthURL(state *common.State, options objx.Map) (string, error) {
 	if options != nil {
-		scope := oauth2.MergeScopes(options.GetStringOrEmpty(oauth2.OAuth2KeyScope), googleDefaultScope)
+		scope := oauth2.MergeScopes(options.Get(oauth2.OAuth2KeyScope).Str(), googleDefaultScope)
 		provider.config.Set(oauth2.OAuth2KeyScope, scope)
 	}
 
-	return oauth2.GetBeginAuthURLWithBase(provider.config.GetString(oauth2.OAuth2KeyAuthURL), state, provider.config)
+	return oauth2.GetBeginAuthURLWithBase(provider.config.Get(oauth2.OAuth2KeyAuthURL).Str(), state, provider.config)
 }
 
 // Get makes an authenticated request and returns the data in the
 // response as a data map.
-func (provider *GoogleProvider) Get(creds *common.Credentials, endpoint string) (objects.Map, error) {
+func (provider *GoogleProvider) Get(creds *common.Credentials, endpoint string) (objx.Map, error) {
 	return oauth2.Get(provider, creds, endpoint)
 }
 
@@ -93,7 +93,7 @@ func (provider *GoogleProvider) GetUser(creds *common.Credentials) (common.User,
 // CompleteAuth takes a map of arguments that are used to
 // complete the authorisation process, completes it, and returns
 // the appropriate Credentials.
-func (provider *GoogleProvider) CompleteAuth(data objects.Map) (*common.Credentials, error) {
+func (provider *GoogleProvider) CompleteAuth(data objx.Map) (*common.Credentials, error) {
 	return oauth2.CompleteAuth(provider.TripperFactory(), data, provider.config, provider)
 }
 

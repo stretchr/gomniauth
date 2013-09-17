@@ -1,7 +1,7 @@
 package common
 
 import (
-	"github.com/stretchr/stew/objects"
+	"github.com/stretchr/objx"
 	"net/http"
 )
 
@@ -18,12 +18,12 @@ type Provider interface {
 	// callback endpoint.
 	// The options argument takes any options used to configure the auth request
 	// sent to the provider.
-	GetBeginAuthURL(state *State, options objects.Map) (string, error)
+	GetBeginAuthURL(state *State, options objx.Map) (string, error)
 
 	// CompleteAuth takes a map of arguments that are used to
 	// complete the authorisation process, completes it, and returns
 	// the appropriate Credentials.
-	CompleteAuth(data objects.Map) (*Credentials, error)
+	CompleteAuth(data objx.Map) (*Credentials, error)
 
 	// GetUser uses the specified Credentials to access the users profile
 	// from the remote provider, and builds the appropriate User object.
@@ -31,7 +31,7 @@ type Provider interface {
 
 	// Get makes an authenticated request and returns the data in the
 	// response as a data map.
-	Get(creds *Credentials, endpoint string) (objects.Map, error)
+	Get(creds *Credentials, endpoint string) (objx.Map, error)
 
 	// GetClient gets an http.Client authenticated with the specified
 	// Credentials.

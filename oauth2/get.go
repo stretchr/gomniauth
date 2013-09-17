@@ -3,15 +3,15 @@ package oauth2
 import (
 	"github.com/stretchr/codecs/services"
 	"github.com/stretchr/gomniauth/common"
-	"github.com/stretchr/stew/objects"
+	"github.com/stretchr/objx"
 	"io/ioutil"
 )
 
 // Get executes an authenticated HTTP GET against the given provider and returns an
-// objects.Map of the response.
+// objx.Map of the response.
 //
 // The response type is automatically detected and used to unmarshal the response.
-func Get(provider common.Provider, creds *common.Credentials, endpoint string) (objects.Map, error) {
+func Get(provider common.Provider, creds *common.Credentials, endpoint string) (objx.Map, error) {
 
 	client, clientErr := provider.GetClient(creds)
 
@@ -40,7 +40,7 @@ func Get(provider common.Provider, creds *common.Credentials, endpoint string) (
 		return nil, getCodecErr
 	}
 
-	var data objects.Map
+	var data objx.Map
 	unmarshalErr := codec.Unmarshal(body, &data)
 
 	if unmarshalErr != nil {

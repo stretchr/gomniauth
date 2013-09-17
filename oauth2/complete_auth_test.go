@@ -3,7 +3,7 @@ package oauth2
 import (
 	"github.com/stretchr/gomniauth/common"
 	"github.com/stretchr/gomniauth/test"
-	"github.com/stretchr/stew/objects"
+	"github.com/stretchr/objx"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"io/ioutil"
@@ -16,7 +16,7 @@ import (
 func TestOAuth2Provider_CompleteAuth_URLEncodedResponse(t *testing.T) {
 
 	config := &common.Config{
-		Map: objects.M(
+		Map: objx.MSI(
 			OAuth2KeyRedirectUrl, OAuth2KeyRedirectUrl,
 			OAuth2KeyScope, OAuth2KeyScope,
 			OAuth2KeyClientID, OAuth2KeyClientID,
@@ -39,15 +39,15 @@ func TestOAuth2Provider_CompleteAuth_URLEncodedResponse(t *testing.T) {
 	testTripperFactory.On("NewTripper", common.EmptyCredentials, mock.Anything).Return(testTripper, nil)
 	testTripper.On("RoundTrip", mock.Anything).Return(testResponse, nil)
 
-	data := objects.M(OAuth2KeyCode, []string{"123"})
+	data := objx.MSI(OAuth2KeyCode, []string{"123"})
 	creds, err := CompleteAuth(testTripperFactory, data, config, testProvider)
 
 	if assert.NoError(t, err) {
 		if assert.NotNil(t, creds, "Creds should be returned") {
 
-			assert.Equal(t, creds.GetStringOrEmpty(OAuth2KeyAccessToken), "ACCESSTOKEN")
-			assert.Equal(t, creds.GetStringOrEmpty(OAuth2KeyRefreshToken), "REFRESHTOKEN")
-			assert.Equal(t, creds.Get(OAuth2KeyExpiresIn).(time.Duration), 20000000000)
+			assert.Equal(t, creds.Get(OAuth2KeyAccessToken).Str(), "ACCESSTOKEN")
+			assert.Equal(t, creds.Get(OAuth2KeyRefreshToken).Str(), "REFRESHTOKEN")
+			assert.Equal(t, creds.Get(OAuth2KeyExpiresIn).Data().(time.Duration), 20000000000)
 
 		}
 	}
@@ -59,7 +59,7 @@ func TestOAuth2Provider_CompleteAuth_URLEncodedResponse(t *testing.T) {
 func TestOAuth2Provider_Non200Response(t *testing.T) {
 
 	config := &common.Config{
-		Map: objects.M(
+		Map: objx.MSI(
 			OAuth2KeyRedirectUrl, OAuth2KeyRedirectUrl,
 			OAuth2KeyScope, OAuth2KeyScope,
 			OAuth2KeyClientID, OAuth2KeyClientID,
@@ -80,7 +80,7 @@ func TestOAuth2Provider_Non200Response(t *testing.T) {
 	testTripperFactory.On("NewTripper", common.EmptyCredentials, mock.Anything).Return(testTripper, nil)
 	testTripper.On("RoundTrip", mock.Anything).Return(testResponse, nil)
 
-	data := objects.M(OAuth2KeyCode, []string{"123"})
+	data := objx.MSI(OAuth2KeyCode, []string{"123"})
 	_, err := CompleteAuth(testTripperFactory, data, config, testProvider)
 
 	if assert.Error(t, err) {
@@ -94,7 +94,7 @@ func TestOAuth2Provider_Non200Response(t *testing.T) {
 func TestOAuth2Provider_CompleteAuth_JSON(t *testing.T) {
 
 	config := &common.Config{
-		Map: objects.M(
+		Map: objx.MSI(
 			OAuth2KeyRedirectUrl, OAuth2KeyRedirectUrl,
 			OAuth2KeyScope, OAuth2KeyScope,
 			OAuth2KeyClientID, OAuth2KeyClientID,
@@ -117,15 +117,15 @@ func TestOAuth2Provider_CompleteAuth_JSON(t *testing.T) {
 	testTripperFactory.On("NewTripper", common.EmptyCredentials, mock.Anything).Return(testTripper, nil)
 	testTripper.On("RoundTrip", mock.Anything).Return(testResponse, nil)
 
-	data := objects.M(OAuth2KeyCode, []string{"123"})
+	data := objx.MSI(OAuth2KeyCode, []string{"123"})
 	creds, err := CompleteAuth(testTripperFactory, data, config, testProvider)
 
 	if assert.NoError(t, err) {
 		if assert.NotNil(t, creds, "Creds should be returned") {
 
-			assert.Equal(t, creds.GetStringOrEmpty(OAuth2KeyAccessToken), "ACCESSTOKEN")
-			assert.Equal(t, creds.GetStringOrEmpty(OAuth2KeyRefreshToken), "REFRESHTOKEN")
-			assert.Equal(t, creds.Get(OAuth2KeyExpiresIn).(time.Duration), 20000000000)
+			assert.Equal(t, creds.Get(OAuth2KeyAccessToken).Str(), "ACCESSTOKEN")
+			assert.Equal(t, creds.Get(OAuth2KeyRefreshToken).Str(), "REFRESHTOKEN")
+			assert.Equal(t, creds.Get(OAuth2KeyExpiresIn).Data().(time.Duration), 20000000000)
 
 		}
 	}

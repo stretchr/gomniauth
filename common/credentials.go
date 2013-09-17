@@ -2,7 +2,7 @@ package common
 
 import (
 	"fmt"
-	"github.com/stretchr/stew/objects"
+	"github.com/stretchr/objx"
 	"strconv"
 )
 
@@ -13,7 +13,7 @@ const (
 // Credentials represent data that describes information needed
 // to make authenticated requests.
 type Credentials struct {
-	objects.Map
+	objx.Map
 }
 
 var EmptyCredentials *Credentials = nil
@@ -22,7 +22,7 @@ var EmptyCredentials *Credentials = nil
 func (c *Credentials) PublicData(options map[string]interface{}) (publicData interface{}, err error) {
 
 	// ensure the ID is a string
-	idValue := c.Map.Get(CredentialsKeyID)
+	idValue := c.Map.Get(CredentialsKeyID).Data()
 	var idStringValue string
 	switch idValue.(type) {
 	case float64:

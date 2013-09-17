@@ -2,7 +2,7 @@ package oauth2
 
 import (
 	"github.com/stretchr/gomniauth/common"
-	"github.com/stretchr/stew/objects"
+	"github.com/stretchr/objx"
 )
 
 // GetBeginAuthURLWithBase returns the OAuth2 authorization URL from the given arguments.
@@ -15,13 +15,13 @@ func GetBeginAuthURLWithBase(base string, state *common.State, config *common.Co
 	}
 
 	// copy the config
-	params := objects.M(
-		OAuth2KeyClientID, config.GetStringOrEmpty(OAuth2KeyClientID),
-		OAuth2KeyRedirectUrl, config.GetStringOrEmpty(OAuth2KeyRedirectUrl),
-		OAuth2KeyScope, config.GetStringOrEmpty(OAuth2KeyScope),
-		OAuth2KeyAccessType, config.GetStringOrEmpty(OAuth2KeyAccessType),
-		OAuth2KeyApprovalPrompt, config.GetStringOrEmpty(OAuth2KeyApprovalPrompt),
-		OAuth2KeyResponseType, config.GetStringOrEmpty(OAuth2KeyResponseType))
+	params := objx.MSI(
+		OAuth2KeyClientID, config.Get(OAuth2KeyClientID).Str(),
+		OAuth2KeyRedirectUrl, config.Get(OAuth2KeyRedirectUrl).Str(),
+		OAuth2KeyScope, config.Get(OAuth2KeyScope).Str(),
+		OAuth2KeyAccessType, config.Get(OAuth2KeyAccessType).Str(),
+		OAuth2KeyApprovalPrompt, config.Get(OAuth2KeyApprovalPrompt).Str(),
+		OAuth2KeyResponseType, config.Get(OAuth2KeyResponseType).Str())
 
 	// set the state
 	stateValue, stateErr := state.SignedBase64(common.GetSecurityKey())

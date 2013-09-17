@@ -2,7 +2,7 @@ package gomniauth
 
 import (
 	"github.com/stretchr/gomniauth/common"
-	"github.com/stretchr/stew/objects"
+	"github.com/stretchr/objx"
 )
 
 // Provider gets a provider by name from the
@@ -22,7 +22,7 @@ func NewState(keyAndValuePairs ...interface{}) *common.State {
 // into a usable State object.
 func StateFromParam(paramValue string) (*common.State, error) {
 
-	stateMap, err := objects.NewMapFromSignedBase64String(paramValue, GetSecurityKey())
+	stateMap, err := objx.FromSignedBase64(paramValue, GetSecurityKey())
 
 	if err != nil {
 		return nil, err
