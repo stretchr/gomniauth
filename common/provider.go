@@ -1,15 +1,20 @@
 package common
 
 import (
+	"github.com/stretchr/codecs"
 	"github.com/stretchr/objx"
 	"net/http"
 )
 
 // Provider represents an authentication provider.
 type Provider interface {
+	codecs.Facade
 
 	// Name is the unique name for this provider.
 	Name() string
+
+	// DisplayName is a human readable name for the provider.
+	DisplayName() string
 
 	// GetBeginAuthURL gets the URL that the client must visit in order
 	// to begin the authentication process.

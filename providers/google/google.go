@@ -1,6 +1,7 @@
 package google
 
 import (
+	"github.com/stretchr/gomniauth"
 	"github.com/stretchr/gomniauth/common"
 	"github.com/stretchr/gomniauth/oauth2"
 	"github.com/stretchr/objx"
@@ -10,6 +11,7 @@ import (
 const (
 	googleDefaultScope    string = "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile"
 	googleName            string = "google"
+	googleDisplayName     string = "Google"
 	googleAuthURL         string = "https://accounts.google.com/o/oauth2/auth"
 	googleTokenURL        string = "https://accounts.google.com/o/oauth2/token"
 	googleEndpointProfile string = "https://www.googleapis.com/oauth2/v1/userinfo"
@@ -46,9 +48,19 @@ func (provider *GoogleProvider) TripperFactory() common.TripperFactory {
 	return provider.tripperFactory
 }
 
+// PublicData gets a public readable view of this provider.
+func (provider *GoogleProvider) PublicData(options map[string]interface{}) (interface{}, error) {
+	return gomniauth.ProviderPublicData(provider, options)
+}
+
 // Name is the unique name for this provider.
 func (provider *GoogleProvider) Name() string {
 	return googleName
+}
+
+// DisplayName is the human readable name for this provider.
+func (provider *GoogleProvider) DisplayName() string {
+	return googleDisplayName
 }
 
 // GetBeginAuthURL gets the URL that the client must visit in order

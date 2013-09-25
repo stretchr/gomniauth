@@ -1,6 +1,7 @@
 package github
 
 import (
+	"github.com/stretchr/gomniauth"
 	"github.com/stretchr/gomniauth/common"
 	"github.com/stretchr/gomniauth/oauth2"
 	"github.com/stretchr/objx"
@@ -10,6 +11,7 @@ import (
 const (
 	githubDefaultScope    string = "user"
 	githubName            string = "github"
+	githubDisplayName     string = "GitHub"
 	githubAuthURL         string = "https://github.com/login/oauth/authorize"
 	githubTokenURL        string = "https://github.com/login/oauth/access_token"
 	githubEndpointProfile string = "https://api.github.com/user"
@@ -48,9 +50,19 @@ func (provider *GithubProvider) TripperFactory() common.TripperFactory {
 	return provider.tripperFactory
 }
 
+// PublicData gets a public readable view of this provider.
+func (provider *GithubProvider) PublicData(options map[string]interface{}) (interface{}, error) {
+	return gomniauth.ProviderPublicData(provider, options)
+}
+
 // Name is the unique name for this provider.
 func (provider *GithubProvider) Name() string {
 	return githubName
+}
+
+// DisplayName is the human readable name for this provider.
+func (provider *GithubProvider) DisplayName() string {
+	return githubDisplayName
 }
 
 // GetBeginAuthURL gets the URL that the client must visit in order

@@ -16,6 +16,11 @@ func (p *TestProvider) Name() string {
 	return p.Called().String(0)
 }
 
+// DisplayName is the human readable name for this provider.
+func (p *TestProvider) DisplayName() string {
+	return p.Called().String(0)
+}
+
 // GetBeginAuthURL gets the URL that the client must visit in order
 // to begin the authentication process.
 func (p *TestProvider) GetBeginAuthURL(state *common.State, options objx.Map) (string, error) {
@@ -48,4 +53,9 @@ func (p *TestProvider) GetUser(creds *common.Credentials) (common.User, error) {
 func (p *TestProvider) GetClient(creds *common.Credentials) (*http.Client, error) {
 	args := p.Called(creds)
 	return args.Get(0).(*http.Client), args.Error(1)
+}
+
+func (p *TestProvider) PublicData(options map[string]interface{}) (publicData interface{}, err error) {
+	args := p.Called(options)
+	return args.Get(0), args.Error(1)
 }
