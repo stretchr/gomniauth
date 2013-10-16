@@ -27,7 +27,8 @@ func TestNewUser(t *testing.T) {
 		facebookKeyID, "123435467890",
 		facebookKeyName, "Mathew",
 		facebookKeyEmail, "my@email.com",
-		facebookKeyNickname, "Mat")
+		facebookKeyNickname, "Mat",
+		"picture", objx.MSI("url", "http://www.myface.com/"))
 	creds := &common.Credentials{Map: objx.MSI(oauth2.OAuth2KeyAccessToken, "ABC123")}
 
 	user := NewUser(data, creds, testProvider)
@@ -39,7 +40,7 @@ func TestNewUser(t *testing.T) {
 		assert.Equal(t, "Mathew", user.Name())
 		assert.Equal(t, "my@email.com", user.Email())
 		assert.Equal(t, "Mat", user.Nickname())
-		assert.Equal(t, "https://graph.facebook.com/123435467890/picture", user.AvatarURL())
+		assert.Equal(t, "http://www.myface.com/", user.AvatarURL())
 
 		// check provider credentials
 		creds := user.ProviderCredentials()[testProvider.Name()]

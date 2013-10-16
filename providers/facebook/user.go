@@ -7,10 +7,11 @@ import (
 )
 
 const (
-	facebookKeyID       string = "id"
-	facebookKeyName     string = "name"
-	facebookKeyNickname string = "username"
-	facebookKeyEmail    string = "email"
+	facebookKeyID         string = "id"
+	facebookKeyName       string = "name"
+	facebookKeyNickname   string = "username"
+	facebookKeyEmail      string = "email"
+	facebookKeyPictureUrl string = "picture.url"
 )
 
 type User struct {
@@ -49,7 +50,7 @@ func (u *User) Nickname() string {
 
 // AvatarURL gets the URL of an image representing the user.
 func (u *User) AvatarURL() string {
-	return "https://graph.facebook.com/" + u.Data().Get(facebookKeyID).Str() + "/picture"
+	return u.Data().Get(facebookKeyPictureUrl).Str()
 }
 
 // ProviderCredentials gets a map of Credentials (by provider name).

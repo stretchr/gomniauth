@@ -47,7 +47,10 @@ func TestGetUser(t *testing.T) {
   "timezone": -6,
   "locale": "en_GB",
   "verified": true,
-  "updated_time": "2013-10-03T19:55:28+0000"
+  "updated_time": "2013-10-03T19:55:28+0000",
+  "picture": {
+    "url": "http://www.myface.com/"
+  }
   }`))
 	testTripper.On("RoundTrip", mock.Anything).Return(testResponse, nil)
 
@@ -61,19 +64,19 @@ func TestGetUser(t *testing.T) {
 		assert.Equal(t, user.AuthCode(), "") // doesn't come from github
 		assert.Equal(t, user.Nickname(), "loginname")
 		assert.Equal(t, user.Email(), "email@address.com")
-		assert.Equal(t, user.AvatarURL(), "https://graph.facebook.com/631819186/picture")
+		assert.Equal(t, user.AvatarURL(), "http://www.myface.com/")
 		assert.Equal(t, user.Data()["link"], "https://www.facebook.com/matryer")
 
-		githubCreds := user.ProviderCredentials()[githubName]
-		if assert.NotNil(t, githubCreds) {
-			assert.Equal(t, "631819186", githubCreds.Get(common.CredentialsKeyID).Str())
+		facebookCreds := user.ProviderCredentials()[facebookName]
+		if assert.NotNil(t, facebookCreds) {
+			assert.Equal(t, "631819186", facebookCreds.Get(common.CredentialsKeyID).Str())
 		}
 
 	}
 
 }
 
-func TestNewGithub(t *testing.T) {
+func TestNewfacebook(t *testing.T) {
 
 	g := New("clientID", "secret", "http://myapp.com/")
 
@@ -85,10 +88,10 @@ func TestNewGithub(t *testing.T) {
 			assert.Equal(t, "clientID", g.config.Get(oauth2.OAuth2KeyClientID).Data())
 			assert.Equal(t, "secret", g.config.Get(oauth2.OAuth2KeySecret).Data())
 			assert.Equal(t, "http://myapp.com/", g.config.Get(oauth2.OAuth2KeyRedirectUrl).Data())
-			assert.Equal(t, githubDefaultScope, g.config.Get(oauth2.OAuth2KeyScope).Data())
+			assert.Equal(t, facebookDefaultScope, g.config.Get(oauth2.OAuth2KeyScope).Data())
 
-			assert.Equal(t, githubAuthURL, g.config.Get(oauth2.OAuth2KeyAuthURL).Data())
-			assert.Equal(t, githubTokenURL, g.config.Get(oauth2.OAuth2KeyTokenURL).Data())
+			assert.Equal(t, facebookAuthURL, g.config.Get(oauth2.OAuth2KeyAuthURL).Data())
+			assert.Equal(t, facebookTokenURL, g.config.Get(oauth2.OAuth2KeyTokenURL).Data())
 
 		}
 
@@ -96,7 +99,7 @@ func TestNewGithub(t *testing.T) {
 
 }
 
-func TestGithubTripperFactory(t *testing.T) {
+func TestfacebookTripperFactory(t *testing.T) {
 
 	g := New("clientID", "secret", "http://myapp.com/")
 	g.tripperFactory = nil
@@ -109,12 +112,12 @@ func TestGithubTripperFactory(t *testing.T) {
 
 }
 
-func TestGithubName(t *testing.T) {
+func TestfacebookName(t *testing.T) {
 	g := New("clientID", "secret", "http://myapp.com/")
-	assert.Equal(t, githubName, g.Name())
+	assert.Equal(t, facebookName, g.Name())
 }
 
-func TestGitHubGetBeginAuthURL(t *testing.T) {
+func TestfacebookGetBeginAuthURL(t *testing.T) {
 
 	common.SetSecurityKey("ABC123")
 
@@ -127,7 +130,7 @@ func TestGitHubGetBeginAuthURL(t *testing.T) {
 	if assert.NoError(t, err) {
 		assert.Contains(t, url, "client_id=clientID")
 		assert.Contains(t, url, "redirect_uri=http%3A%2F%2Fmyapp.com%2F")
-		assert.Contains(t, url, "scope="+githubDefaultScope)
+		assert.Contains(t, url, "scope="+facebookDefaultScope)
 		assert.Contains(t, url, "access_type="+oauth2.OAuth2AccessTypeOnline)
 		assert.Contains(t, url, "approval_prompt="+oauth2.OAuth2ApprovalPromptAuto)
 	}
@@ -141,7 +144,7 @@ func TestGitHubGetBeginAuthURL(t *testing.T) {
 	if assert.NoError(t, err) {
 		assert.Contains(t, url, "client_id=clientID")
 		assert.Contains(t, url, "redirect_uri=http%3A%2F%2Fmyapp.com%2F")
-		assert.Contains(t, url, "scope=avatar+"+githubDefaultScope)
+		assert.Contains(t, url, "scope=avatar+"+facebookDefaultScope)
 		assert.Contains(t, url, "access_type="+oauth2.OAuth2AccessTypeOnline)
 		assert.Contains(t, url, "approval_prompt="+oauth2.OAuth2ApprovalPromptAuto)
 	}

@@ -34,6 +34,9 @@ func (t *OAuth2Tripper) RoundTrip(req *http.Request) (*http.Response, error) {
 		headerK, headerV := AuthorizationHeader(t.Credentials())
 		req.Header.Set(headerK, headerV)
 
+		// set the accept header to ask for JSON
+		req.Header.Set("Accept", "application/json")
+
 	}
 
 	return t.underlyingTransport.RoundTrip(req)
