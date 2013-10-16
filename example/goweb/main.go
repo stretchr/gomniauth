@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/stretchr/gomniauth"
+	"github.com/stretchr/gomniauth/providers/facebook"
 	"github.com/stretchr/gomniauth/providers/github"
 	"github.com/stretchr/gomniauth/providers/google"
 	"github.com/stretchr/goweb"
@@ -42,7 +43,31 @@ func main() {
 	gomniauth.WithProviders(
 		github.New("3d1e6ba69036e0624b61", "7e8938928d802e7582908a5eadaaaf22d64babf1", "http://localhost:8080/auth/github/callback"),
 		google.New("1051709296778.apps.googleusercontent.com", "7oZxBGwpCI3UgFMgCq80Kx94", "http://localhost:8080/auth/google/callback"),
+		facebook.New("537611606322077", "f9f4d77b3d3f4f5775369f5c9f88f65e", "http://localhost:8080/auth/facebook/callback"),
 	)
+
+	goweb.Map("/", func(ctx context.Context) error {
+
+		return goweb.Respond.With(ctx, http.StatusOK, []byte(`
+      <html>
+        <body>
+          <h2>Log in with...</h2>
+          <ul>
+            <li>
+              <a href="auth/github/login">GitHub</a>
+            </li>
+            <li>
+              <a href="auth/google/login">Google</a>
+            </li>
+            <li>
+              <a href="auth/facebook/login">Facebook</a>
+            </li>
+          </ul>
+        </body>
+      </html>
+    `))
+
+	})
 
 	/*
 	   GET /auth/{provider}/login
