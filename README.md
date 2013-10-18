@@ -6,8 +6,7 @@ Authentication framework for Go applications.
 
   * OAuth2 today
   * Supports other protocols too
-  * [Multiple providers](https://github.com/stretchr/gomniauth/tree/master/providers)
-  * Comes with Google and GitHub baked in
+  * [Multiple providers](https://github.com/stretchr/gomniauth/tree/master/providers) - Supports Google, GitHub and Facebook and [more](https://github.com/stretchr/gomniauth/tree/master/providers)
   * Easily extensible
   * [Example web app](https://github.com/stretchr/gomniauth/tree/master/example) to copy
   * Works beautifully with [Goweb](https://github.com/stretchr/goweb)
