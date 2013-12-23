@@ -32,7 +32,7 @@ Check out the [example web app code](https://github.com/stretchr/gomniauth/tree/
 
 ### Set up Gomniauth
 
-First and only once for your application, you need to setup the security key and providers.  The security key is used when hashing any data that gets transmitted to ensure it's integrity.
+First and only once for your application, you need to setup the security key and providers.  The security key is used when hashing any data that gets transmitted to ensure its integrity.
 
 You are free to use the [signature package's RandomKey function](http://godoc.org/github.com/stretchr/signature#RandomKey) to generate a unique code every time your application starts.
 
