@@ -23,14 +23,18 @@ func GetBeginAuthURLWithBase(base string, state *common.State, config *common.Co
 		OAuth2KeyApprovalPrompt, config.Get(OAuth2KeyApprovalPrompt).Str(),
 		OAuth2KeyResponseType, config.Get(OAuth2KeyResponseType).Str())
 
-	// set the state
-	stateValue, stateErr := state.SignedBase64(common.GetSecurityKey())
+	if state != nil {
 
-	if stateErr != nil {
-		return "", stateErr
+		// set the state
+		stateValue, stateErr := state.SignedBase64(common.GetSecurityKey())
+
+		if stateErr != nil {
+			return "", stateErr
+		}
+
+		params.Set("state", stateValue)
+
 	}
-
-	params.Set("state", stateValue)
 
 	// generate the query part
 	query, queryErr := params.URLQuery()
