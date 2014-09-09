@@ -11,7 +11,7 @@ const (
 	facebookKeyName       string = "name"
 	facebookKeyNickname   string = "username"
 	facebookKeyEmail      string = "email"
-	facebookKeyPictureUrl string = "picture.url"
+	facebookKeyPictureUrl string = "picture.data.url"
 )
 
 type User struct {
