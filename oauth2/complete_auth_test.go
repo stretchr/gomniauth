@@ -47,7 +47,7 @@ func TestOAuth2Provider_CompleteAuth_URLEncodedResponse(t *testing.T) {
 
 			assert.Equal(t, creds.Get(OAuth2KeyAccessToken).Str(), "ACCESSTOKEN")
 			assert.Equal(t, creds.Get(OAuth2KeyRefreshToken).Str(), "REFRESHTOKEN")
-			assert.Equal(t, creds.Get(OAuth2KeyExpiresIn).Data().(time.Duration), 20000000000)
+			assert.Equal(t, creds.Get(OAuth2KeyExpiresIn).Data().(time.Duration), time.Duration(20)*time.Second)
 
 		}
 	}
@@ -125,7 +125,7 @@ func TestOAuth2Provider_CompleteAuth_JSON(t *testing.T) {
 
 			assert.Equal(t, creds.Get(OAuth2KeyAccessToken).Str(), "ACCESSTOKEN")
 			assert.Equal(t, creds.Get(OAuth2KeyRefreshToken).Str(), "REFRESHTOKEN")
-			assert.Equal(t, creds.Get(OAuth2KeyExpiresIn).Data().(time.Duration), 20000000000)
+			assert.Equal(t, creds.Get(OAuth2KeyExpiresIn).Data().(time.Duration), time.Duration(20)*time.Second)
 
 		}
 	}

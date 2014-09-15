@@ -62,7 +62,10 @@ func CompleteAuth(tripperFactory common.TripperFactory, data objx.Map, config *c
 
 	// make sure we have an OK response
 	if response.StatusCode != http.StatusOK {
-		return nil, &common.AuthServerError{ErrorMessage: fmt.Sprintf("Server replied with %s.", response.Status)}
+		return nil, &common.AuthServerError{
+			ErrorMessage: fmt.Sprintf("Server replied with %s.", response.Status),
+			Response: response,
+		}
 	}
 
 	content, _, mimeTypeErr := mime.ParseMediaType(response.Header.Get("Content-Type"))
@@ -89,7 +92,10 @@ func CompleteAuth(tripperFactory common.TripperFactory, data objx.Map, config *c
 
 		// did an error occur?
 		if len(vals.Get("error").Str()) > 0 {
-			return nil, &common.AuthServerError{ErrorMessage: vals.Get("error").Str()}
+			return nil, &common.AuthServerError{
+				ErrorMessage: vals.Get("error").Str(),
+				Response: response,
+			}
 		}
 
 		expiresIn, _ := time.ParseDuration(vals.Get(OAuth2KeyExpiresIn).Str() + "s")

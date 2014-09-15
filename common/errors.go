@@ -1,5 +1,9 @@
 package common
 
+import (
+	"net/http"
+)
+
 const (
 	PrefixForErrors string = "gomniauth: "
 )
@@ -24,6 +28,7 @@ func (e *MissingParameterError) Error() string {
 
 type AuthServerError struct {
 	ErrorMessage string
+	Response *http.Response
 }
 
 func (e *AuthServerError) Error() string {
