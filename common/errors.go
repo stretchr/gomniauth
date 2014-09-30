@@ -28,7 +28,7 @@ func (e *MissingParameterError) Error() string {
 
 type AuthServerError struct {
 	ErrorMessage string
-	Response *http.Response
+	Response     *http.Response
 }
 
 func (e *AuthServerError) Error() string {
