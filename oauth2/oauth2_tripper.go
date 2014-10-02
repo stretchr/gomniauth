@@ -13,7 +13,7 @@ type OAuth2Tripper struct {
 
 // NewOAuth2Tripper creates a new OAuth2Tripper with the given arguments.
 func NewOAuth2Tripper(creds *common.Credentials, provider common.Provider) *OAuth2Tripper {
-	return &OAuth2Tripper{http.DefaultTransport, creds, provider}
+	return &OAuth2Tripper{common.GetRoundTripper(), creds, provider}
 }
 
 // RoundTrip is called by the http package when making a request to a server. This

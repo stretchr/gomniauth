@@ -16,3 +16,13 @@ type Tripper interface {
 	// requests to.
 	Provider() Provider
 }
+
+var roundTripperInUse http.RoundTripper = http.DefaultTransport.(http.RoundTripper)
+
+func GetRoundTripper() http.RoundTripper {
+	return roundTripperInUse
+}
+
+func SetRoundTripper(t http.RoundTripper) {
+	roundTripperInUse = t
+}
