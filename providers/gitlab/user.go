@@ -23,7 +23,7 @@ type User struct {
 func NewUser(data objx.Map, creds *common.Credentials, provider common.Provider) *User {
 	user := &User{data}
 
-	creds.Set(common.CredentialsKeyID, data[githubKeyID])
+	creds.Set(common.CredentialsKeyID, data[gitlabKeyID])
 	// set provider credentials
 	user.data[common.UserKeyProviderCredentials] = map[string]*common.Credentials{
 		provider.Name(): creds,
@@ -34,24 +34,24 @@ func NewUser(data objx.Map, creds *common.Credentials, provider common.Provider)
 
 // Email gets the users email address.
 func (u *User) Email() string {
-	return u.Data().Get(githubKeyEmail).Str()
+	return u.Data().Get(gitlabKeyEmail).Str()
 }
 
 // Name gets the users full name.
 func (u *User) Name() string {
-	return u.Data().Get(githubKeyName).Str()
+	return u.Data().Get(gitlabKeyName).Str()
 
 }
 
 // Nickname gets the users nickname or username.
 func (u *User) Nickname() string {
-	return u.Data().Get(githubKeyNickname).Str()
+	return u.Data().Get(gitlabKeyNickname).Str()
 
 }
 
 // AvatarURL gets the URL of an image representing the user.
 func (u *User) AvatarURL() string {
-	return u.Data().Get(githubKeyAvatarUrl).Str()
+	return u.Data().Get(gitlabKeyAvatarUrl).Str()
 }
 
 // ProviderCredentials gets a map of Credentials (by provider name).

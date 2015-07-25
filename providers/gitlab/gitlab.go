@@ -1,21 +1,23 @@
 package gitlab
 
 import (
+	"net/http"
+
 	"github.com/stretchr/gomniauth"
 	"github.com/stretchr/gomniauth/common"
 	"github.com/stretchr/gomniauth/oauth2"
 	"github.com/stretchr/objx"
-	"net/http"
 )
 
 // Constants
-gitlabDefaultScope    string = "user"
-gitlabName            string = "gitlab"
-gitlabDisplayName     string = "Gitlab"
-gitlabAuthURL         string = "https://gitlab.com/oauth/authorize"
-gitlabTokenURL        string = "https://gitlab.com/login/oauth/token"
-gitlabEndpointProfile string = "https://api.gitlab.com/user"
-
+const (
+	gitlabDefaultScope    string = "user"
+	gitlabName            string = "gitlab"
+	gitlabDisplayName     string = "Gitlab"
+	gitlabAuthURL         string = "https://gitlab.com/oauth/authorize"
+	gitlabTokenURL        string = "https://gitlab.com/login/oauth/token"
+	gitlabEndpointProfile string = "https://api.gitlab.com/user"
+)
 
 // GitlabProvider implements the Provider interface and provides Gitlab
 // OAuth2 communication capabilities.
@@ -26,7 +28,7 @@ type GitlabProvider struct {
 
 func New(clientId, clientSecret, redirectUrl string) *GitlabProvider {
 
-	p := new(GithubProvider)
+	p := new(GitlabProvider)
 	p.config = &common.Config{Map: objx.MSI(
 		oauth2.OAuth2KeyAuthURL, gitlabAuthURL,
 		oauth2.OAuth2KeyTokenURL, gitlabTokenURL,
@@ -57,7 +59,7 @@ func (provider *GitlabProvider) PublicData(options map[string]interface{}) (inte
 
 // Name is the unique name for this provider.
 func (provider *GitlabProvider) Name() string {
-	return githubName
+	return gitlabName
 }
 
 // DisplayName is the human readable name for this provider.
