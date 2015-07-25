@@ -8,11 +8,11 @@ import (
 )
 
 const (
-	githubKeyID        string = "id"
-	githubKeyName      string = "name"
-	githubKeyNickname  string = "login"
-	githubKeyEmail     string = "email"
-	githubKeyAvatarUrl string = "avatar_url"
+	gitlabKeyID        string = "id"
+	gitlabKeyName      string = "name"
+	gitlabKeyNickname  string = "login"
+	gitlabKeyEmail     string = "email"
+	gitlabKeyAvatarUrl string = "avatar_url"
 )
 
 type User struct {
