@@ -11,7 +11,7 @@ import (
 
 // Constants
 const (
-	gitlabDefaultScope    string = "user"
+	gitlabDefaultScope    string = "api"
 	gitlabName            string = "gitlab"
 	gitlabDisplayName     string = "Gitlab"
 	gitlabAuthURL         string = "https://gitlab.com/oauth/authorize"
