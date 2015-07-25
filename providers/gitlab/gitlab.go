@@ -13,8 +13,8 @@ gitlabDefaultScope    string = "user"
 gitlabName            string = "gitlab"
 gitlabDisplayName     string = "Gitlab"
 gitlabAuthURL         string = "https://gitlab.com/oauth/authorize"
-gitlabTokenURL        string = "https://github.com/login/oauth/access_token"
-gitlabEndpointProfile string = "https://api.github.com/user"
+gitlabTokenURL        string = "https://gitlab.com/login/oauth/token"
+gitlabEndpointProfile string = "https://api.gitlab.com/user"
 
 
 // GitlabProvider implements the Provider interface and provides Gitlab
@@ -33,7 +33,7 @@ func New(clientId, clientSecret, redirectUrl string) *GitlabProvider {
 		oauth2.OAuth2KeyClientID, clientId,
 		oauth2.OAuth2KeySecret, clientSecret,
 		oauth2.OAuth2KeyRedirectUrl, redirectUrl,
-		oauth2.OAuth2KeyScope, githubDefaultScope,
+		oauth2.OAuth2KeyScope, gitlabDefaultScope,
 		oauth2.OAuth2KeyAccessType, oauth2.OAuth2AccessTypeOnline,
 		oauth2.OAuth2KeyApprovalPrompt, oauth2.OAuth2ApprovalPromptAuto,
 		oauth2.OAuth2KeyResponseType, oauth2.OAuth2KeyCode)}
