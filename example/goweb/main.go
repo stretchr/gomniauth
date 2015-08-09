@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/gomniauth/providers/facebook"
 	"github.com/stretchr/gomniauth/providers/github"
 	"github.com/stretchr/gomniauth/providers/google"
+	"github.com/stretchr/gomniauth/providers/uber"
 	"github.com/stretchr/goweb"
 	"github.com/stretchr/goweb/context"
 	"log"
@@ -44,6 +45,7 @@ func main() {
 		github.New("3d1e6ba69036e0624b61", "7e8938928d802e7582908a5eadaaaf22d64babf1", "http://localhost:8080/auth/github/callback"),
 		google.New("1051709296778.apps.googleusercontent.com", "7oZxBGwpCI3UgFMgCq80Kx94", "http://localhost:8080/auth/google/callback"),
 		facebook.New("537611606322077", "f9f4d77b3d3f4f5775369f5c9f88f65e", "http://localhost:8080/auth/facebook/callback"),
+		uber.New("UBERKEY", "UBERSECRET", "http://localhost:8080/auth/uber/callback"),
 	)
 
 	goweb.Map("/", func(ctx context.Context) error {
@@ -61,6 +63,9 @@ func main() {
             </li>
             <li>
               <a href="auth/facebook/login">Facebook</a>
+            </li>
+             <li>
+              <a href="auth/uber/login">Uber</a>
             </li>
           </ul>
         </body>
