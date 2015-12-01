@@ -14,7 +14,7 @@ const (
 	soundcloudDisplayName     string = "Soundcloud"
 	soundcloudAuthURL         string = "https://soundcloud.com/connect"
 	soundcloudTokenURL        string = "https://api.soundcloud.com/oauth2/token"
-	soundcloudEndpointProfile string = "https://api.soundcloud.com/me"
+	soundcloudEndpointProfile string = "https://api.soundcloud.com/me?oauth_token="
 )
 
 type SoundcloudProvider struct {
@@ -90,7 +90,7 @@ func (provider *SoundcloudProvider) Get(creds *common.Credentials, endpoint stri
 // from the remote provider, and builds the appropriate User object.
 func (provider *SoundcloudProvider) GetUser(creds *common.Credentials) (common.User, error) {
 
-	profileData, err := provider.Get(creds, soundcloudEndpointProfile)
+	profileData, err := provider.Get(creds, soundcloudEndpointProfile+creds.Map.Get(oauth2.OAuth2KeyAccessToken).Str())
 
 	if err != nil {
 		return nil, err
