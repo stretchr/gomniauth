@@ -20,14 +20,14 @@ const (
 // GithubProvider implements the Provider interface and provides Github
 // OAuth2 communication capabilities.
 type GithubProvider struct {
-	config         *common.Config
+	Config         *common.Config
 	tripperFactory common.TripperFactory
 }
 
 func New(clientId, clientSecret, redirectUrl string) *GithubProvider {
 
 	p := new(GithubProvider)
-	p.config = &common.Config{Map: objx.MSI(
+	p.Config = &common.Config{Map: objx.MSI(
 		oauth2.OAuth2KeyAuthURL, githubAuthURL,
 		oauth2.OAuth2KeyTokenURL, githubTokenURL,
 		oauth2.OAuth2KeyClientID, clientId,
@@ -76,9 +76,9 @@ func (provider *GithubProvider) DisplayName() string {
 func (provider *GithubProvider) GetBeginAuthURL(state *common.State, options objx.Map) (string, error) {
 	if options != nil {
 		scope := oauth2.MergeScopes(options.Get(oauth2.OAuth2KeyScope).Str(), githubDefaultScope)
-		provider.config.Set(oauth2.OAuth2KeyScope, scope)
+		provider.Config.Set(oauth2.OAuth2KeyScope, scope)
 	}
-	return oauth2.GetBeginAuthURLWithBase(provider.config.Get(oauth2.OAuth2KeyAuthURL).Str(), state, provider.config)
+	return oauth2.GetBeginAuthURLWithBase(provider.Config.Get(oauth2.OAuth2KeyAuthURL).Str(), state, provider.Config)
 }
 
 // Get makes an authenticated request and returns the data in the
@@ -107,7 +107,7 @@ func (provider *GithubProvider) GetUser(creds *common.Credentials) (common.User,
 // complete the authorisation process, completes it, and returns
 // the appropriate Credentials.
 func (provider *GithubProvider) CompleteAuth(data objx.Map) (*common.Credentials, error) {
-	return oauth2.CompleteAuth(provider.TripperFactory(), data, provider.config, provider)
+	return oauth2.CompleteAuth(provider.TripperFactory(), data, provider.Config, provider)
 }
 
 // GetClient returns an authenticated http.Client that can be used to make requests to
