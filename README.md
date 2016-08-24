@@ -20,7 +20,9 @@ Authentication framework for Go applications.
 
 Install Gomniauth by doing:
 
-    go get github.com/stretchr/gomniauth
+```shell
+$ go get github.com/stretchr/gomniauth
+```
 
 Check out the [example web app code](https://github.com/stretchr/gomniauth/tree/master/example) to see how to use Gomniauth using [Goweb](https://github.com/stretchr/goweb).
 
@@ -36,14 +38,18 @@ First and only once for your application, you need to setup the security key and
 
 You are free to use the [signature package's RandomKey function](http://godoc.org/github.com/stretchr/signature#RandomKey) to generate a unique code every time your application starts.
 
-    gomniauth.SetSecurityKey(signature.RandomKey(64))
+```go
+gomniauth.SetSecurityKey(signature.RandomKey(64))
+```
 
 A provider represents an authentication service that will be available to your users.  Usually, you'll have to add some configuration of your own, such as your application `key` and `secret` (provided by the auth service), and the `callback` into your app where users will be sent following successful (or not) authentication.
 
-    gomniauth.WithProviders(
-      github.New("key", "secret", "callback"),
-      google.New("key", "secret", "callback"),
-    )
+```go
+gomniauth.WithProviders(
+  github.New("key", "secret", "callback"),
+  google.New("key", "secret", "callback"),
+)
+```    
 
 #### What kind of callback?
 
@@ -69,11 +75,15 @@ Once a provider has been chosen, you must redirect them to be authenticated.  Yo
 
 So if the user chooses to login using Github, you would do:
 
-    provider, err := gomniauth.Provider("github")
+```go
+provider, err := gomniauth.Provider("github")
+```
 
 Once you have your provider, you can get the URL to redirect users to by calling:
 
-    authUrl, err := provider.GetBeginAuthURL(state, options)
+```go
+authUrl, err := provider.GetBeginAuthURL(state, options)
+```
 
 You should then redirect the user to the `authUrl`.
 
@@ -95,8 +105,10 @@ For example, the user might hit:
 
 You don't need to worry about the detail of the parameters passed back, because Gomniauth takes care of those for you.  You just need to pass them into the `CompleteAuth` method of your provider:
 
-    provider, err := gomniauth.Provider("github")
-    creds, err := provider.CompleteAuth(queryParams)
+```go
+provider, err := gomniauth.Provider("github")
+creds, err := provider.CompleteAuth(queryParams)
+```
 
 NOTE: It's unlikely you'll hard-code the provider name, we have done it here to make it obvious what's going on.
 
