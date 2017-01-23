@@ -2,6 +2,10 @@
 
 Authentication framework for Go applications.
 
+* EDITOR NOTE: It is recommended that you transition to the [Goth package](https://github.com/markbates/goth).
+
+---
+
 ## Features
 
   * OAuth2 today
