@@ -61,7 +61,7 @@ func TestGetUser(t *testing.T) {
 	if assert.NoError(t, err) && assert.NotNil(t, user) {
 
 		assert.Equal(t, user.Name(), "their-name")
-		assert.Equal(t, user.AuthCode(), "") // doesn't come from github
+		assert.Equal(t, user.AuthCode(), "") // doesn't come from facebook
 		assert.Equal(t, user.Nickname(), "loginname")
 		assert.Equal(t, user.Email(), "email@address.com")
 		assert.Equal(t, user.AvatarURL(), "http://www.myface.com/")
