@@ -38,7 +38,7 @@ func New(clientId, clientSecret, redirectUrl string) *GoogleProvider {
 	return p
 }
 
-// TipperFactory gets an OAuth2TripperFactory
+// TripperFactory gets an OAuth2TripperFactory
 func (provider *GoogleProvider) TripperFactory() common.TripperFactory {
 
 	if provider.tripperFactory == nil {

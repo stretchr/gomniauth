@@ -42,7 +42,7 @@ func (u *User) Nickname() string {
 
 }
 
-// Instagram API doesn't return email
+// Email: Instagram API doesn't return email
 func (u *User) Email() string {
 	return ""
 }
@@ -75,7 +75,7 @@ func (u *User) AuthCode() string {
 	return u.Data().Get(common.UserKeyAuthCode).Str()
 }
 
-// GetValue gets any User field by name.
+// Data gets any User field by name.
 func (u *User) Data() objx.Map {
 	return u.data
 }
